@@ -17,7 +17,6 @@ class DashboardScreen extends StatelessWidget {
       length: 5,
       child: Scaffold(
           appBar: AppBar(
-            title: Text("Notes"),
           ),
           drawer: Drawer(
             child: ListView(
