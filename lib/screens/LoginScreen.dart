@@ -64,7 +64,6 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FlutterLogin(
-      title: 'Login Screen',
       logo: const AssetImage('assets/worldskill.png'),
       theme: LoginTheme(
         primaryColor: Colors.white,

@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:mad005/screens/DocumentScanScreen.dart';
+import 'package:mad005/screens/document_scan_tab/DocumentScanScreen.dart';
 
 import '../helper/auth_service.dart';
 import 'LoginScreen.dart';
