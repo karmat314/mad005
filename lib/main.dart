@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mad005/screens/LoginScreen.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
+import 'helper/firebase_options.dart';
 
 
 void main() async {

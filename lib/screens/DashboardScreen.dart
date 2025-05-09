@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mad005/screens/DocumentScanScreen.dart';
 
 import '../helper/auth_service.dart';
 import 'LoginScreen.dart';
@@ -55,6 +56,10 @@ class DashboardScreen extends StatelessWidget {
           ),
           body: const TabBarView(
               children: [
+                Icon(Icons.settings),
+                DocumentScanScreen(),
+                Icon(Icons.settings),
+                Icon(Icons.settings),
                 Icon(Icons.settings),
                 // Add other tabs here
               ]
