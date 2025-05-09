@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'DashboardScreen.dart';
 
 const users = {
@@ -10,7 +11,7 @@ const users = {
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
-  Duration get loginTime => const Duration(milliseconds: 1000);
+  Duration get loginTime => const Duration(milliseconds: 500);
 
   Future<String?> _authUser(LoginData data) {
     debugPrint('Name: ${data.name}, Password: ${data.password}');
@@ -48,7 +49,38 @@ class LoginScreen extends StatelessWidget {
       title: 'Login Screen',
       onLogin: _authUser,
       onSignup: _signupUser,
-
+      loginProviders: <LoginProvider>[
+    LoginProvider(
+      icon: FontAwesomeIcons.google,
+      label: 'Google',
+      callback: () async {
+        debugPrint('start google sign in');
+        await Future.delayed(loginTime);
+        debugPrint('stop google sign in');
+        return null;
+      },
+    ),
+        LoginProvider(
+          icon: FontAwesomeIcons.facebook,
+          label: 'Facebook',
+          callback: () async {
+            debugPrint('start google sign in');
+            await Future.delayed(loginTime);
+            debugPrint('stop google sign in');
+            return null;
+          },
+        ),
+        LoginProvider(
+          icon: FontAwesomeIcons.battleNet,
+          label: 'NDI',
+          callback: () async {
+            debugPrint('start google sign in');
+            await Future.delayed(loginTime);
+            debugPrint('stop google sign in');
+            return null;
+          },
+        ),
+      ],
       onSubmitAnimationCompleted: () {
         Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (context) => const DashboardScreen(),
