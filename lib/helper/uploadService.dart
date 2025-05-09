@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -9,8 +11,6 @@ class UploadService {
 
   UploadService(this.dbHelper);
 
-
-  // Generated with help of ChatGPT
   Future<void> uploadFileAndSave(BuildContext context) async {
     final result = await FilePicker.platform.pickFiles(type: FileType.any);
 
@@ -19,6 +19,8 @@ class UploadService {
       final fileName = result.files.single.name;
       final String dateScanned = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
 
+
+      // Recommended by ChatGPT
       final List<String> tagOptions = ['Document', 'ID Card', 'Passport', 'Driving Licence'];
 
       final String? tag = await showDialog<String>(
@@ -83,4 +85,32 @@ class UploadService {
       );
     }
   }
+
+  Future<void> uploadAudio(BuildContext context) async {
+    // Pick an audio file
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['mp3']
+    );
+
+    if (result != null) {
+      File file = File(result.files.single.path!);
+
+      // Handle the file upload
+      // (upload logic would be similar to other files)
+
+      // Save the audio file info to the database
+      await dbHelper.insertDocument({
+        'title': file.path.split('/').last,
+        'filePath': file.path,
+        'tag': 'Audio',  // You can set a tag for audio
+        'dateScanned': DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now()),
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Audio file uploaded!')));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No audio file selected')));
+    }
+  }
+
 }

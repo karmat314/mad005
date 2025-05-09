@@ -46,7 +46,7 @@ class _DocumentScanScreenState extends State<DocumentScanScreen> {
   final _key = GlobalKey<ExpandableFabState>();
 
   // List of items in our dropdown menu
-  var items = ['All Categories','Document', 'Id Card', 'Passport', 'Driving Licence'];
+  var items = ['All Categories','Document', 'Id Card', 'Passport', 'Driving Licence', 'Audio'];
 
   void onChanged(String? newValue) {
     setState(() {
@@ -113,12 +113,12 @@ class _DocumentScanScreenState extends State<DocumentScanScreen> {
           'dateScanned': dateScanned,
         });
 
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Document saved!')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Document saved!'), duration: Duration(milliseconds: 300),));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Tag is required')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Tag is required'), duration: Duration(milliseconds: 300)));
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Scan cancelled')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Scan cancelled'), duration: Duration(milliseconds: 300)));
     }
   }
 
@@ -192,14 +192,17 @@ class _DocumentScanScreenState extends State<DocumentScanScreen> {
               ),
             ],
           ),
-          const Row(
+          Row(
             children: [
-              Text('Upload Audio'),
-              SizedBox(width: 20),
+              const Text('Upload Audio'),
+              const SizedBox(width: 20),
               FloatingActionButton.small(
                 heroTag: null,
-                onPressed: null,
-                child: Icon(Icons.mic),
+                onPressed: () async {
+                  await uploadService.uploadAudio(context);
+                  documentsListKey.currentState?.refreshDocuments();
+                },
+                child: const Icon(Icons.mic),
               ),
             ],
           ),

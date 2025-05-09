@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mad005/screens/document_scan_tab/DocumentScanScreen.dart';
 
 import '../helper/auth_service.dart';
@@ -24,32 +23,60 @@ class DashboardScreen extends StatelessWidget {
               padding: EdgeInsets.zero,
               children: [
                 const DrawerHeader(
-                  decoration: BoxDecoration(color: Colors.blue),
-                  child: Text('Drawer Header'),
+                  child: ListTile(
+                    leading: CircleAvatar(backgroundImage: AssetImage('assets/worldskill.png')),
+                    title: Text('TVET Connect'),
+                  ),
                 ),
                 ListTile(
-                  title: const Text('Item 1'),
+                  leading: Icon(Icons.home, size: 30,),
+                  title: const Text('Home'),
                   onTap: () {
                     // Update the state of the app.
                     // ...
                   },
                 ),
                 ListTile(
-                  title: const Text('Item 2'),
+                  leading: Icon(Icons.document_scanner, size: 30,),
+                  title: const Text('Scan Docs'),
+                  onTap: () {
+                    // Update the state of the app.
+                    // ...
+                  },
+                ),ListTile(
+                  leading: Icon(Icons.portrait_rounded, size: 30,),
+                  title: const Text('Portfolio'),
+                  onTap: () {
+                    // Update the state of the app.
+                    // ...
+                  },
+                ),ListTile(
+                  leading: Icon(Icons.quiz_rounded, size: 30,),
+                  title: const Text('Quizzes'),
+                  onTap: () {
+                    // Update the state of the app.
+                    // ...
+                  },
+                ),ListTile(
+                  leading: Icon(Icons.settings, size: 30,),
+                  title: const Text('Settings'),
                   onTap: () {
                     // Update the state of the app.
                     // ...
                   },
                 ),
-                ElevatedButton(
-                  onPressed: () {
+
+
+                ListTile(
+                  leading: Icon(Icons.logout),
+                  title: const Text('Log out'),
+                  onTap: () {
                     authService.signOut();
                     Navigator.of(context).pushReplacement(MaterialPageRoute(
                       builder: (context) => const LoginScreen(),
                     ));
                   },
-                  child: Text("Log out"),
-                )
+                ),
               ],
             ),
           ),
