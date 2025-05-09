@@ -38,6 +38,7 @@ dependencies:
   flutter_social_button: ^1.1.6+1
   font_awesome_flutter: ^10.8.0
   firebase_core: ^3.13.0
+  firebase_auth: ^5.5.3
 
 dev_dependencies:
   flutter_test:
