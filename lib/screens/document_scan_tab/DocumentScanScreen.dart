@@ -6,6 +6,7 @@ import 'package:flutter_doc_scanner/flutter_doc_scanner.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:intl/intl.dart';
 import '../../helper/database_helper.dart';
+import '../../helper/uploadService.dart';
 import 'document_list_widget.dart';
 
 class DocumentScanScreen extends StatefulWidget {
@@ -16,8 +17,17 @@ class DocumentScanScreen extends StatefulWidget {
 }
 
 class _DocumentScanScreenState extends State<DocumentScanScreen> {
-  final dbHelper = DatabaseHelper();
   final docScanner = FlutterDocScanner();
+
+  late DatabaseHelper dbHelper;
+  late UploadService uploadService;
+
+  @override
+  void initState() {
+    super.initState();
+    dbHelper = DatabaseHelper();
+    uploadService = UploadService(dbHelper);
+  }
 
   final GlobalKey<DocumentsListWidgetState> documentsListKey = GlobalKey();
 
@@ -30,7 +40,9 @@ class _DocumentScanScreenState extends State<DocumentScanScreen> {
     setState(() {});
   }
 
+  String searchQuery = '';
   String dropdownvalue = 'All Categories';
+
   final _key = GlobalKey<ExpandableFabState>();
 
   // List of items in our dropdown menu
@@ -129,18 +141,33 @@ class _DocumentScanScreenState extends State<DocumentScanScreen> {
             SearchBar(
               leading: Icon(Icons.search),
               hintText: "Search Your Files...",
+              onChanged: (value) {
+                setState(() {
+                  searchQuery = value;
+                });
+              },
             ),
+
             SizedBox(height: 20),
             DropdownButtonFormField(
               decoration: InputDecoration(prefixIcon: Icon(Icons.folder)),
               value: dropdownvalue,
-              items:
-                  items.map((String item) {
-                    return DropdownMenuItem(value: item, child: Text(item));
-                  }).toList(),
-              onChanged: onChanged,
+              items: items.map((String item) {
+                return DropdownMenuItem(value: item, child: Text(item));
+              }).toList(),
+              onChanged: (newValue) {
+                setState(() {
+                  dropdownvalue = newValue!;
+                });
+              },
             ),
-            DocumentsListWidget(key: documentsListKey),
+
+            DocumentsListWidget(
+              key: documentsListKey,
+              searchQuery: searchQuery,
+              selectedCategory: dropdownvalue,
+            ),
+
           ],
         ),
       ),
@@ -151,14 +178,17 @@ class _DocumentScanScreenState extends State<DocumentScanScreen> {
         childrenAnimation: ExpandableFabAnimation.none,
         distance: 70,
         children: [
-          const Row(
+          Row(
             children: [
-              Text('Upload File'),
-              SizedBox(width: 20),
+              const Text('Upload File'),
+              const SizedBox(width: 20),
               FloatingActionButton.small(
                 heroTag: null,
-                onPressed: null,
-                child: Icon(Icons.upload_file),
+                onPressed: () async {
+                  await uploadService.uploadFileAndSave(context);
+                  documentsListKey.currentState?.refreshDocuments();
+                },
+                child: const Icon(Icons.upload_file),
               ),
             ],
           ),
@@ -179,7 +209,10 @@ class _DocumentScanScreenState extends State<DocumentScanScreen> {
               const SizedBox(width: 20),
               FloatingActionButton.small(
                 heroTag: null,
-                onPressed: scanAndSave,
+                onPressed: () {
+                  scanAndSave();
+                  documentsListKey.currentState?.refreshDocuments();
+                },
                 child: const Icon(Icons.camera_alt),
               ),
             ],
