@@ -4,6 +4,12 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // Generated with ChatGPT
+
+  String? getUsername() {
+    final user = _auth.currentUser;
+    return user?.email;  // returns email (which is username in your case)
+  }
+
   Future<String?> signInWithEmailPassword(String email, String password) async {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);

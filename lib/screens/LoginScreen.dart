@@ -31,6 +31,8 @@ class LoginScreen extends StatelessWidget {
 
 
 
+
+
   /// Signup with Firebase
   Future<String?> _signupUser(SignupData data) async {
     debugPrint('Signup attempt: ${data.name}, Password: ${data.password}');
