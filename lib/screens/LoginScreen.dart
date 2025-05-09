@@ -25,7 +25,7 @@ class LoginScreen extends StatelessWidget {
       return null; // flutter_login treats `null` as success
     } else {
       // Login failed
-      return "Failed to login";
+      return errorMessage;
     }
   }
 
@@ -65,6 +65,7 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return FlutterLogin(
       title: 'Login Screen',
+      logo: const AssetImage('assets/worldskill.png'),
       theme: LoginTheme(
         primaryColor: Colors.white,
         buttonStyle: const TextStyle(

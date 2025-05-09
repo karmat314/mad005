@@ -10,8 +10,6 @@ class AuthService {
       return null; // success = no error message
     } on FirebaseAuthException catch (e) {
       return e.message; // failure = error message string
-    } catch (e) {
-      return 'An unknown error occurred';
     }
   }
 
