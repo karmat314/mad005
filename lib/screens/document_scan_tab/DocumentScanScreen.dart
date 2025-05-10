@@ -175,6 +175,9 @@ class _DocumentScanScreenState extends State<DocumentScanScreen> {
       floatingActionButton: ExpandableFab(
         key: _key,
         type: ExpandableFabType.up,
+        overlayStyle: ExpandableFabOverlayStyle(
+          color: Colors.white.withOpacity(0.9),
+        ),
         childrenAnimation: ExpandableFabAnimation.none,
         distance: 70,
         children: [

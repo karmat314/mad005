@@ -66,6 +66,7 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FlutterLogin(
+      title: 'TVET Connect',
       logo: const AssetImage('assets/worldskill.png'),
       theme: LoginTheme(
         primaryColor: Colors.white,

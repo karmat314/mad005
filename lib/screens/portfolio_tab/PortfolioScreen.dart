@@ -10,6 +10,7 @@ import 'package:mad005/screens/portfolio_tab/training_widget.dart';
 import 'package:mad005/screens/portfolio_tab/work_history_widget.dart';
 import 'package:mad005/screens/portfolio_tab/work_showcase_widget.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'contact_widget.dart';
 
@@ -88,7 +89,10 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
               const SizedBox(width: 20),
               FloatingActionButton.small(
                 heroTag: null,
-                onPressed: () async {},
+                onPressed: () {
+                  final content = 'https://my_profile.com';
+                  Share.share(content, subject: 'Profile link');
+                },
                 child: const Icon(Icons.share),
               ),
             ],
