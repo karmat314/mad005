@@ -1,57 +1,61 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class SettingsScreen extends StatefulWidget {
+class SettingsPage extends StatelessWidget {
+  const SettingsPage({super.key});
 
-  const SettingsScreen({super.key});
-
-
-  State<SettingsScreen> createState() => _SettingsScreenState();
-}
-
-class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
+      appBar: AppBar(
+        title: const Text('Settings'),
+        centerTitle: true,
+      ),
+      body: ListView(
         children: [
-          Card(
-            margin: EdgeInsets.all(16.0),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Center(
-                child: Text("Your points balance"),
-              ),
-            ),
-          ),
-          Card(
-            margin: EdgeInsets.all(16.0),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Center(
-                child: Text("Leaderboard"),
-              ),
-            ),
-          ),
-          Card(
-            margin: EdgeInsets.all(16.0),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Center(
-                child: Text("Grow our career"),
-              ),
-            ),
-          ),
-          Card(
-            margin: EdgeInsets.all(16.0),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Center(
-                child: Text("Stay Updated"),
-              ),
+          // Light Mode Toggle
+          ListTile(
+            leading: const Icon(Icons.light_mode),
+            title: const Text('Light Mode'),
+            trailing: Switch(
+              value: false, // Dummy value, you can bind this to actual settings
+              onChanged: (value) {
+                // Implement functionality for toggling light mode
+              },
             ),
           ),
 
+          // Notifications Toggle
+          ListTile(
+            leading: const Icon(Icons.notifications),
+            title: const Text('Notifications'),
+            trailing: Switch(
+              value: true, // Dummy value
+              onChanged: (value) {
+                // Implement functionality for toggling notifications
+              },
+            ),
+          ),
+
+          // Logout Button
+          ListTile(
+            leading: const Icon(Icons.logout),
+            title: const Text('Logout'),
+            onTap: () {
+              // Implement logout functionality
+            },
+          ),
+
+          // Delete Account Button
+          ListTile(
+            leading: const Icon(Icons.delete),
+            title: const Text('Delete Account'),
+            onTap: () {
+              // Implement account deletion functionality
+            },
+          ),
+
+          // Spacer to push items to the top
+          const SizedBox(height: 50),
         ],
       ),
     );

@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mad005/screens/portfolio_tab/name_widget.dart';
 import 'package:mad005/screens/portfolio_tab/profile_picture_widget.dart';
 import 'package:mad005/screens/portfolio_tab/skills_widget.dart';
 import 'package:mad005/screens/portfolio_tab/training_widget.dart';
@@ -171,6 +172,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                 // verified by admin (ticked)
                 // username
                 ProfilePortfolioWidget(userId: userId),
+                NameWidget(userId: userId,),
                 ContactDetailsWidget(userId: userId),
                 WorkHistoryWidget(userId: userId),
                 SkillsWidget(userId: userId),
