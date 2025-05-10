@@ -14,15 +14,21 @@ class WorkShowcaseWidget extends StatefulWidget {
 class _WorkShowcaseWidgetState extends State<WorkShowcaseWidget> {
   final FirebaseFirestore db = FirebaseFirestore.instance;
 
-  void _showAddWorkDialog() {
-    final _nameController = TextEditingController();
-    final _linkController = TextEditingController();
+  void _showAddOrEditWorkDialog({DocumentSnapshot? doc}) {
+    final _nameController = TextEditingController(
+      text: doc != null ? (doc['name'] ?? '') : '',
+    );
+    final _linkController = TextEditingController(
+      text: doc != null ? (doc['link'] ?? '') : '',
+    );
+
+    final isEditing = doc != null;
 
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Add Work Showcase'),
+          title: Text(isEditing ? 'Edit Work Showcase' : 'Add Work Showcase'),
           content: SingleChildScrollView(
             child: Column(
               children: [
@@ -53,20 +59,36 @@ class _WorkShowcaseWidgetState extends State<WorkShowcaseWidget> {
                       .doc(widget.userId)
                       .collection('work_showcase');
 
-                  await showcaseRef.add({
-                    'name': name,
-                    'link': link,
-                  });
+                  if (isEditing) {
+                    await showcaseRef.doc(doc!.id).update({
+                      'name': name,
+                      'link': link,
+                    });
+                  } else {
+                    await showcaseRef.add({
+                      'name': name,
+                      'link': link,
+                    });
+                  }
 
                   Navigator.of(context).pop();
                 }
               },
-              child: const Text('Add'),
+              child: Text(isEditing ? 'Save' : 'Add'),
             ),
           ],
         );
       },
     );
+  }
+
+  void _deleteWork(DocumentSnapshot doc) async {
+    final showcaseRef = db
+        .collection('users')
+        .doc(widget.userId)
+        .collection('work_showcase');
+
+    await showcaseRef.doc(doc.id).delete();
   }
 
   String? getYoutubeVideoId(String url) {
@@ -111,7 +133,7 @@ class _WorkShowcaseWidgetState extends State<WorkShowcaseWidget> {
                 const Spacer(),
                 IconButton(
                   icon: const Icon(Icons.add),
-                  onPressed: _showAddWorkDialog,
+                  onPressed: () => _showAddOrEditWorkDialog(),
                 ),
               ],
             ),
@@ -157,7 +179,28 @@ class _WorkShowcaseWidgetState extends State<WorkShowcaseWidget> {
                             : const Icon(Icons.broken_image, size: 60),
                         title: Text(name),
                         subtitle: Text(link, overflow: TextOverflow.ellipsis),
-                          onTap: (link != null && link.isNotEmpty) ? () => launchUrl(Uri.parse(link)) : null,
+                        onTap: (link.isNotEmpty)
+                            ? () => launchUrl(Uri.parse(link))
+                            : null,
+                        trailing: PopupMenuButton<String>(
+                          onSelected: (value) {
+                            if (value == 'edit') {
+                              _showAddOrEditWorkDialog(doc: doc);
+                            } else if (value == 'delete') {
+                              _deleteWork(doc);
+                            }
+                          },
+                          itemBuilder: (context) => [
+                            const PopupMenuItem(
+                              value: 'edit',
+                              child: Text('Edit'),
+                            ),
+                            const PopupMenuItem(
+                              value: 'delete',
+                              child: Text('Delete'),
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   }).toList(),
