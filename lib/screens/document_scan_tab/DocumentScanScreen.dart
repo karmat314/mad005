@@ -128,48 +128,50 @@ class _DocumentScanScreenState extends State<DocumentScanScreen> {
       appBar: AppBar(title: const Text("Document Scan")),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Scan Documents",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 20),
-            Text("Manage and organize your important documents by category"),
-            SizedBox(height: 20),
-            SearchBar(
-              leading: Icon(Icons.search),
-              hintText: "Search Your Files...",
-              onChanged: (value) {
-                setState(() {
-                  searchQuery = value;
-                });
-              },
-            ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Scan Documents",
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 20),
+              Text("Manage and organize your important documents by category"),
+              SizedBox(height: 20),
+              SearchBar(
+                leading: Icon(Icons.search),
+                hintText: "Search Your Files...",
+                onChanged: (value) {
+                  setState(() {
+                    searchQuery = value;
+                  });
+                },
+              ),
 
-            SizedBox(height: 20),
-            DropdownButtonFormField(
-              decoration: InputDecoration(prefixIcon: Icon(Icons.folder)),
-              value: dropdownvalue,
-              items: items.map((String item) {
-                return DropdownMenuItem(value: item, child: Text(item));
-              }).toList(),
-              onChanged: (newValue) {
-                setState(() {
-                  dropdownvalue = newValue!;
-                });
-              },
-            ),
+              SizedBox(height: 20),
+              DropdownButtonFormField(
+                decoration: InputDecoration(prefixIcon: Icon(Icons.folder)),
+                value: dropdownvalue,
+                items: items.map((String item) {
+                  return DropdownMenuItem(value: item, child: Text(item));
+                }).toList(),
+                onChanged: (newValue) {
+                  setState(() {
+                    dropdownvalue = newValue!;
+                  });
+                },
+              ),
 
-            DocumentsListWidget(
-              key: documentsListKey,
-              searchQuery: searchQuery,
-              selectedCategory: dropdownvalue,
-            ),
+              DocumentsListWidget(
+                key: documentsListKey,
+                searchQuery: searchQuery,
+                selectedCategory: dropdownvalue,
+              ),
 
-          ],
-        ),
+            ],
+          ),
+        )
       ),
       floatingActionButtonLocation: ExpandableFab.location,
       floatingActionButton: ExpandableFab(
