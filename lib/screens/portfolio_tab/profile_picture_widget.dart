@@ -107,56 +107,63 @@ class _ProfilePortfolioWidgetState extends State<ProfilePortfolioWidget> {
   Widget build(BuildContext context) {
     return Card(
       elevation: 4,
-      margin: EdgeInsets.all(16),
+      margin: const EdgeInsets.all(0),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
+        padding: const EdgeInsets.all(0),
+        child: Stack(
+          clipBehavior: Clip.none, // Allow overflow for profile pic
           children: [
             // Background Image (Cover photo)
-            Stack(
-              alignment: Alignment.topRight,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: _backgroundImage != null && _backgroundImage!.existsSync()
-                      ? Image.file(_backgroundImage!, width: double.infinity, height: 150, fit: BoxFit.cover)
-                      : Container(
-                    width: double.infinity,
-                    height: 150,
-                    color: Colors.grey[300],
-                    child: Icon(Icons.image, size: 100),
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.edit, color: Colors.white),
-                  onPressed: () => _pickImage(false),
-                ),
-              ],
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: _backgroundImage != null && _backgroundImage!.existsSync()
+                  ? Image.file(
+                _backgroundImage!,
+                width: double.infinity,
+                height: 150,
+                fit: BoxFit.cover,
+              )
+                  : Container(
+                width: double.infinity,
+                height: 150,
+                color: Colors.grey[300],
+                child: Icon(Icons.image, size: 100),
+              ),
             ),
-            SizedBox(height: 16),
-
             // Profile Picture (Avatar)
-            Stack(
-              alignment: Alignment.bottomRight,
-              children: [
-                CircleAvatar(
-                  radius: 50,
-                  backgroundImage: _profileImage != null && _profileImage!.existsSync()
-                      ? FileImage(_profileImage!)
-                      : null,
-                  child: (_profileImage == null || !_profileImage!.existsSync())
-                      ? Icon(Icons.account_circle, size: 100)
-                      : null,
-                ),
-                IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () => _pickImage(true),
-                ),
-              ],
+            Positioned(
+              top: 100, // Position it halfway down the background image
+              left: MediaQuery.of(context).size.width / 2 - 70, // Center horizontally
+              child: CircleAvatar(
+                radius: 50,
+                backgroundImage: _profileImage != null && _profileImage!.existsSync()
+                    ? FileImage(_profileImage!)
+                    : null,
+                child: (_profileImage == null || !_profileImage!.existsSync())
+                    ? Icon(Icons.account_circle, size: 100)
+                    : null,
+              ),
             ),
-            SizedBox(height: 16),
-
+            // Edit icon for background image
+            Positioned(
+              top: 10,
+              right: 10,
+              child: IconButton(
+                icon: Icon(Icons.edit, color: Colors.white),
+                onPressed: () => _pickImage(false),
+              ),
+            ),
+            // Edit icon for profile image
+            Positioned(
+              bottom: 10,
+              right: 100,
+              child: IconButton(
+                icon: Icon(Icons.edit),
+                onPressed: () => _pickImage(true),
+              ),
+            ),
+            // Show progress indicator if uploading
             if (_isUploading)
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -167,4 +174,5 @@ class _ProfilePortfolioWidgetState extends State<ProfilePortfolioWidget> {
       ),
     );
   }
+
 }

@@ -176,6 +176,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                 // verified by admin (ticked)
                 // username
                 ProfilePortfolioWidget(userId: userId),
+                SizedBox(height: 50),
                 NameWidget(userId: userId,),
                 ContactDetailsWidget(userId: userId),
                 WorkHistoryWidget(userId: userId),
