@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mad005/screens/portfolio_tab/profile_picture_widget.dart';
 import 'package:mad005/screens/portfolio_tab/skills_widget.dart';
 import 'package:mad005/screens/portfolio_tab/training_widget.dart';
 import 'package:mad005/screens/portfolio_tab/work_history_widget.dart';
@@ -20,6 +21,7 @@ class PortfolioScreen extends StatefulWidget {
 class _PortfolioScreenState extends State<PortfolioScreen> {
   final FirebaseFirestore db = FirebaseFirestore.instance;
   final _key = GlobalKey<ExpandableFabState>();
+
 
   @override
   Widget build(BuildContext context) {
@@ -131,6 +133,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                 // profile image
                 // verified by admin (ticked)
                 // username
+                ProfilePortfolioWidget(userId: userId),
                 ContactDetailsWidget(userId: userId),
                 WorkHistoryWidget(userId: userId),
                 SkillsWidget(userId: userId),
