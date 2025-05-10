@@ -5,14 +5,15 @@ import '../document_scan_tab/DocumentScanScreen.dart';
 import 'core_feature_widget.dart';
 
 class HomeScreen extends StatefulWidget {
+  final TabController tabController;
 
-  const HomeScreen({super.key});
+  const HomeScreen({super.key, required this.tabController});
 
-
-  State<HomeScreen> createState() => _HomeScreenState();
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>{
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,19 +72,24 @@ class _HomeScreenState extends State<HomeScreen>{
                   title: 'Document Scanner',
                   subtitle: 'Organize IDs & Certs',
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => DocumentScanScreen()),
-                    );
+                    widget.tabController.animateTo(1); // Switch to Scan Docs tab
                   },
                 ),
-
+                FeatureWidget(
+                  icon: Icons.portrait_rounded,
+                  title: 'Portfolio',
+                  subtitle: 'Manage your portfolio',
+                  onTap: () {
+                    widget.tabController.animateTo(2); // Switch to Scan Docs tab
+                  },
+                ),
+                // Add more features here if needed
               ],
             ),
           ),
-
         ],
       ),
     );
   }
 }
+
