@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mad005/screens/portfolio_tab/work_history_form.dart';
+import 'package:mad005/screens/portfolio_tab/widgets/work_history_form.dart';
 
 class WorkHistoryWidget extends StatefulWidget {
   final String userId;

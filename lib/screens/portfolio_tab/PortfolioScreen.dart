@@ -3,16 +3,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:mad005/screens/portfolio_tab/name_widget.dart';
-import 'package:mad005/screens/portfolio_tab/profile_picture_widget.dart';
-import 'package:mad005/screens/portfolio_tab/skills_widget.dart';
-import 'package:mad005/screens/portfolio_tab/training_widget.dart';
-import 'package:mad005/screens/portfolio_tab/work_history_widget.dart';
-import 'package:mad005/screens/portfolio_tab/work_showcase_widget.dart';
+import 'package:mad005/screens/portfolio_tab/widgets/name_widget.dart';
+import 'package:mad005/screens/portfolio_tab/widgets/profile_picture_widget.dart';
+import 'package:mad005/screens/portfolio_tab/widgets/skills_widget.dart';
+import 'package:mad005/screens/portfolio_tab/widgets/training_widget.dart';
+import 'package:mad005/screens/portfolio_tab/widgets/work_history_widget.dart';
+import 'package:mad005/screens/portfolio_tab/widgets/work_showcase_widget.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'contact_widget.dart';
+import 'widgets/contact_widget.dart';
 
 class PortfolioScreen extends StatefulWidget {
   const PortfolioScreen({super.key});
