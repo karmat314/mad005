@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class SkillsWidget extends StatefulWidget {
   final String userId;
@@ -24,14 +23,19 @@ class _SkillsWidgetState extends State<SkillsWidget> {
           title: const Text('Add Skill'),
           content: TextField(
             controller: _skillController,
-            decoration: const InputDecoration(hintText: 'Enter skill (e.g., Flutter)'),
+            decoration: const InputDecoration(
+              hintText: 'Enter skill (e.g., Flutter)',
+              border: OutlineInputBorder(),
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: const Text('Cancel'),
             ),
-            ElevatedButton(
+            ElevatedButton.icon(
+              icon: const Icon(Icons.add),
+              label: const Text('Add'),
               onPressed: () async {
                 final skillText = _skillController.text.trim();
                 if (skillText.isNotEmpty) {
@@ -45,7 +49,35 @@ class _SkillsWidgetState extends State<SkillsWidget> {
                   Navigator.of(context).pop();
                 }
               },
-              child: const Text('Add'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showDeleteSkillDialog(DocumentReference skillDoc, String skillName) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Delete Skill'),
+          content: Text('Are you sure you want to delete "$skillName"?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.delete),
+              label: const Text('Delete'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+              ),
+              onPressed: () async {
+                await skillDoc.delete();
+                Navigator.of(context).pop();
+              },
             ),
           ],
         );
@@ -61,11 +93,13 @@ class _SkillsWidgetState extends State<SkillsWidget> {
         .collection('skills');
 
     return Card(
-      elevation: 3,
+      elevation: 4,
       margin: const EdgeInsets.all(16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
@@ -77,7 +111,8 @@ class _SkillsWidgetState extends State<SkillsWidget> {
                 IconButton(
                   icon: const Icon(Icons.add),
                   onPressed: _showAddSkillDialog,
-                )
+                  tooltip: 'Add Skill',
+                ),
               ],
             ),
             const SizedBox(height: 8),
@@ -89,24 +124,33 @@ class _SkillsWidgetState extends State<SkillsWidget> {
                 }
 
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
+                  return const Center(child: CircularProgressIndicator());
                 }
 
                 final skillDocs = snapshot.data!.docs;
 
                 if (skillDocs.isEmpty) {
-                  return const Text('No skills added yet.');
+                  return const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8),
+                    child: Text('No skills added yet.'),
+                  );
                 }
 
                 return Wrap(
                   spacing: 8,
-                  runSpacing: 4,
+                  runSpacing: 8,
                   children: skillDocs.map((doc) {
                     final data = doc.data() as Map<String, dynamic>;
                     final skill = data['skill'] ?? '';
 
-                    return Chip(
+                    return InputChip(
                       label: Text(skill),
+                      onDeleted: () => _showDeleteSkillDialog(doc.reference, skill),
+                      deleteIcon: const Icon(Icons.close),
+                      deleteButtonTooltipMessage: 'Delete skill',
+                      backgroundColor: Colors.blue[50],
+                      labelStyle: const TextStyle(fontWeight: FontWeight.w500),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     );
                   }).toList(),
                 );

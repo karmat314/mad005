@@ -8,7 +8,8 @@ import 'package:mad005/screens/portfolio_tab/skills_widget.dart';
 import 'package:mad005/screens/portfolio_tab/training_widget.dart';
 import 'package:mad005/screens/portfolio_tab/work_history_widget.dart';
 import 'package:mad005/screens/portfolio_tab/work_showcase_widget.dart';
-
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'contact_widget.dart';
 
 class PortfolioScreen extends StatefulWidget {
@@ -22,6 +23,43 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
   final FirebaseFirestore db = FirebaseFirestore.instance;
   final _key = GlobalKey<ExpandableFabState>();
 
+  void _showQrCodeDialog(BuildContext context) {
+    final String portfolioLink = 'https://your-portfolio-link.com/karma-thapkhey';
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Scan to view portfolio'),
+          content: SizedBox(   // ⬅️ wrap in SizedBox to constrain size
+            width: 250,
+            height: 300,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                QrImageView(
+                  data: portfolioLink,
+                  version: QrVersions.auto,
+                  size: 200.0,   // ⬅️ fixed size is okay now
+                ),
+                const SizedBox(height: 10),
+                Text(portfolioLink, style: const TextStyle(fontSize: 12)),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,11 +67,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
     final userId = user?.uid;
 
     if (userId == null) {
-      return Scaffold(
-        body: const Center(
-          child: Text('User not signed in'),
-        ),
-      );
+      return Scaffold(body: const Center(child: Text('User not signed in')));
     }
 
     return Scaffold(
@@ -53,21 +87,20 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
               const SizedBox(width: 20),
               FloatingActionButton.small(
                 heroTag: null,
-                onPressed: () async {
-
-                },
+                onPressed: () async {},
                 child: const Icon(Icons.share),
               ),
             ],
           ),
+
           Row(
             children: [
               const Text('Show QR code'),
               const SizedBox(width: 20),
               FloatingActionButton.small(
                 heroTag: null,
-                onPressed: () async {
-
+                onPressed: () {
+                  _showQrCodeDialog(context);
                 },
                 child: const Icon(Icons.qr_code),
               ),
@@ -80,6 +113,11 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
               FloatingActionButton.small(
                 heroTag: null,
                 onPressed: () {
+                  launchUrl(
+                    Uri.parse(
+                      "https://www.linkedin.com/in/karma-thapkhey-567bb12b4",
+                    ),
+                  );
                 },
                 child: const Icon(FontAwesomeIcons.linkedin),
               ),
@@ -91,8 +129,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
               const SizedBox(width: 20),
               FloatingActionButton.small(
                 heroTag: null,
-                onPressed: () {
-                },
+                onPressed: () {},
                 child: const Icon(FontAwesomeIcons.filePdf),
               ),
             ],
@@ -103,8 +140,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
               const SizedBox(width: 20),
               FloatingActionButton.small(
                 heroTag: null,
-                onPressed: () {
-                },
+                onPressed: () {},
                 child: const Icon(FontAwesomeIcons.flag),
               ),
             ],
@@ -115,16 +151,17 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
               const SizedBox(width: 20),
               FloatingActionButton.small(
                 heroTag: null,
-                onPressed: () {
-                },
+                onPressed: () {},
                 child: const Icon(FontAwesomeIcons.shield),
               ),
             ],
           ),
         ],
       ),
-      body: SafeArea( // Optional: avoids notches/top bar
-        child: SingleChildScrollView( // FIX: makes the screen scrollable
+      body: SafeArea(
+        // Optional: avoids notches/top bar
+        child: SingleChildScrollView(
+          // FIX: makes the screen scrollable
           child: Padding(
             padding: const EdgeInsets.all(16.0), // Optional: adds padding
             child: Column(
