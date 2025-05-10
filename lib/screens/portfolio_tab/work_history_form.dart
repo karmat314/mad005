@@ -3,7 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class AddWorkHistoryForm extends StatefulWidget {
-  const AddWorkHistoryForm({super.key});
+  final String? workHistoryId;
+
+  const AddWorkHistoryForm({super.key, this.workHistoryId});
 
   @override
   State<AddWorkHistoryForm> createState() => _AddWorkHistoryFormState();
@@ -19,7 +21,34 @@ class _AddWorkHistoryFormState extends State<AddWorkHistoryForm> {
 
   bool _isLoading = false;
 
-  void _addWorkHistory() async {
+  // Load data if editing an existing work history
+  @override
+  void initState() {
+    super.initState();
+    if (widget.workHistoryId != null) {
+      _loadWorkHistory();
+    }
+  }
+
+  void _loadWorkHistory() async {
+    final workHistoryRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser?.uid)
+        .collection('work_history')
+        .doc(widget.workHistoryId);
+
+    final docSnapshot = await workHistoryRef.get();
+
+    if (docSnapshot.exists) {
+      final data = docSnapshot.data() as Map<String, dynamic>;
+      _titleController.text = data['title'] ?? '';
+      _companyController.text = data['company'] ?? '';
+      _timeController.text = data['time'] ?? '';
+      _descriptionController.text = data['description'] ?? '';
+    }
+  }
+
+  void _saveWorkHistory() async {
     if (!_formKey.currentState!.validate()) return;
 
     final userId = FirebaseAuth.instance.currentUser?.uid;
@@ -39,25 +68,33 @@ class _AddWorkHistoryFormState extends State<AddWorkHistoryForm> {
         .doc(userId)
         .collection('work_history');
 
-    await workHistoryRef.add({
+    final workHistoryData = {
       'title': _titleController.text.trim(),
       'company': _companyController.text.trim(),
       'time': _timeController.text.trim(),
       'description': _descriptionController.text.trim(),
-      'createdAt': FieldValue.serverTimestamp(), // optional — useful for sorting
-    });
+      'createdAt': FieldValue.serverTimestamp(),
+    };
+
+    if (widget.workHistoryId == null) {
+      // Add new work history
+      await workHistoryRef.add(workHistoryData);
+    } else {
+      // Update existing work history
+      await workHistoryRef.doc(widget.workHistoryId).update(workHistoryData);
+    }
 
     setState(() {
       _isLoading = false;
     });
 
-    Navigator.of(context).pop(); // Close form after adding
+    Navigator.of(context).pop(); // Close form after saving
   }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Add Work History'),
+      title: Text(widget.workHistoryId == null ? 'Add Work History' : 'Edit Work History'),
       content: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -94,10 +131,10 @@ class _AddWorkHistoryFormState extends State<AddWorkHistoryForm> {
           child: const Text('Cancel'),
         ),
         ElevatedButton(
-          onPressed: _isLoading ? null : _addWorkHistory,
+          onPressed: _isLoading ? null : _saveWorkHistory,
           child: _isLoading
               ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
-              : const Text('Save'),
+              : Text(widget.workHistoryId == null ? 'Save' : 'Update'),
         ),
       ],
     );
