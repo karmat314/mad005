@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import 'leaderboardItemWidgets/leaderboard_item.dart';
+
 class LeaderboardWidget extends StatefulWidget {
   const LeaderboardWidget({super.key});
 
@@ -161,7 +163,7 @@ class _LeaderboardWidgetState extends State<LeaderboardWidget> {
                 final isCurrentUser =
                     user.userId == FirebaseAuth.instance.currentUser?.uid;
 
-                return _buildLeaderboardItem(
+                return LeaderBoardItem(
                   rank: index + 1,
                   name: user.name,
                   points: user.totalPoints,
@@ -191,60 +193,7 @@ class _LeaderboardWidgetState extends State<LeaderboardWidget> {
     );
   }
 
-  Widget _buildLeaderboardItem({
-    required int rank,
-    required String name,
-    required int points,
-    bool isCurrentUser = false,
-  }) {
-    final colorScheme = Theme.of(context).colorScheme;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 28,
-            child: Text(
-              "$rank",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: colorScheme.onSurface.withOpacity(0.7),
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              name,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: isCurrentUser ? FontWeight.bold : FontWeight.normal,
-                color: isCurrentUser
-                    ? colorScheme.primary
-                    : colorScheme.onSurface,
-              ),
-            ),
-          ),
-          Chip(
-            backgroundColor: isCurrentUser
-                ? colorScheme.primary.withOpacity(0.1)
-                : colorScheme.surfaceContainerHighest,
-            label: Text(
-              "$points pts",
-              style: TextStyle(
-                color: isCurrentUser
-                    ? colorScheme.primary
-                    : colorScheme.onSurfaceVariant,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class LeaderboardUser {
