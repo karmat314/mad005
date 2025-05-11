@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mad005/screens/home_tab/leaderboardWidgets/FullLeaderboardScreen.dart';
 
 import 'leaderboard_item.dart';
 
@@ -176,7 +177,13 @@ class _LeaderboardWidgetState extends State<LeaderboardWidget> {
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: () {
-                  // Navigate to full leaderboard
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => FullLeaderboardScreen()
+                    ),
+                  );
                 },
                 child: Text(
                   "View Full Leaderboard",
