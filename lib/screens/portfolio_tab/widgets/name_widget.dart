@@ -47,7 +47,10 @@ class _NameWidgetState extends State<NameWidget> {
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancel')),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
             ElevatedButton(
               onPressed: () async {
                 final contactRef = db.collection('users').doc(widget.userId).collection('profile').doc('about');
@@ -94,6 +97,10 @@ class _NameWidgetState extends State<NameWidget> {
             final jobTitle = data['jobTitle'] ?? 'No job title set';
             final description = data['description'] ?? 'No description set';
 
+            // Check if isVerified exists and is true
+            final bool isVerified = (data.containsKey('isVerified') && data['isVerified'] == true);
+              print(data.containsKey('isVerified'));
+
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -104,12 +111,24 @@ class _NameWidgetState extends State<NameWidget> {
                     backgroundColor: Colors.blueAccent,
                     child: const Icon(Icons.account_circle, size: 32, color: Colors.white),
                   ),
-                  title: Text(
-                    name,
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  title: Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          name,
+                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      if (isVerified)
+                        const Icon(Icons.verified, color: Colors.blue, size: 20),
+                    ],
                   ),
                   subtitle: Text(jobTitle, style: const TextStyle(fontSize: 14, color: Colors.grey)),
-                  trailing: widget.isViewer? null : IconButton(
+                  trailing: widget.isViewer
+                      ? null
+                      : IconButton(
                     icon: const Icon(Icons.edit),
                     onPressed: () => _showEditDialog(data),
                   ),
