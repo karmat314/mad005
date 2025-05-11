@@ -18,10 +18,7 @@ import 'widgets/contact_widget.dart';
 class PortfolioScreen extends StatefulWidget {
   final bool isViewer;
 
-  const PortfolioScreen({
-    super.key,
-    required this.isViewer, // Defaults to false (owner mode)
-  });
+  const PortfolioScreen({super.key, required this.isViewer});
 
   @override
   State<PortfolioScreen> createState() => _PortfolioScreenState();
@@ -31,15 +28,25 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
   final FirebaseFirestore db = FirebaseFirestore.instance;
   final _key = GlobalKey<ExpandableFabState>();
 
+  // ✨ NEW: GlobalKeys for sections
+  final GlobalKey nameKey = GlobalKey();
+  final GlobalKey badgesKey = GlobalKey();
+  final GlobalKey contactKey = GlobalKey();
+  final GlobalKey workHistoryKey = GlobalKey();
+  final GlobalKey skillsKey = GlobalKey();
+  final GlobalKey trainingKey = GlobalKey();
+  final GlobalKey showcaseKey = GlobalKey();
+
+  final ScrollController _scrollController = ScrollController();
+
   void _showQrCodeDialog(BuildContext context) {
     final String portfolioLink = 'https://your-portfolio-link.com/karma-thapkhey';
-
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: const Text('Scan to view portfolio'),
-          content: SizedBox( // ⬅️ wrap in SizedBox to constrain size
+          content: SizedBox(
             width: 250,
             height: 300,
             child: Column(
@@ -48,7 +55,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                 QrImageView(
                   data: portfolioLink,
                   version: QrVersions.auto,
-                  size: 200.0, // ⬅️ fixed size is okay now
+                  size: 200.0,
                 ),
                 const SizedBox(height: 10),
                 Text(portfolioLink, style: const TextStyle(fontSize: 12)),
@@ -68,24 +75,33 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
     );
   }
 
+  Future<void> _scrollToSection(GlobalKey key) async {
+    final context = key.currentContext;
+    if (context != null) {
+      await Scrollable.ensureVisible(
+        context,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
     final userId = user?.uid;
 
     if (userId == null) {
-      return Scaffold(body: const Center(child: Text('User not signed in')));
+      return const Scaffold(body: Center(child: Text('User not signed in')));
     }
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: const Text('Your Portfolio')),
       floatingActionButtonLocation: ExpandableFab.location,
       floatingActionButton: ExpandableFab(
         key: _key,
         type: ExpandableFabType.up,
-        overlayStyle: ExpandableFabOverlayStyle(
-          color: Colors.white.withOpacity(0.9),
-        ),
+        overlayStyle: ExpandableFabOverlayStyle(color: Colors.white.withOpacity(0.9)),
         childrenAnimation: ExpandableFabAnimation.none,
         distance: 70,
         children: [
@@ -103,7 +119,6 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
               ),
             ],
           ),
-
           Row(
             children: [
               const Text('Show QR code'),
@@ -124,11 +139,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
               FloatingActionButton.small(
                 heroTag: null,
                 onPressed: () {
-                  launchUrl(
-                    Uri.parse(
-                      "https://www.linkedin.com/in/karma-thapkhey-567bb12b4",
-                    ),
-                  );
+                  launchUrl(Uri.parse("https://www.linkedin.com/in/karma-thapkhey-567bb12b4"));
                 },
                 child: const Icon(FontAwesomeIcons.linkedin),
               ),
@@ -170,59 +181,75 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
         ],
       ),
       body: SafeArea(
-        // Optional: avoids notches/top bar
         child: SingleChildScrollView(
-          // FIX: makes the screen scrollable
+          controller: _scrollController, // ⬅️ attach scroll controller
           child: Padding(
-            padding: const EdgeInsets.all(16.0), // Optional: adds padding
+            padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // profile image
-                // verified by admin (ticked)
-                // username
-                ProfilePortfolioWidget(userId: userId, isViewer: widget.isViewer,),
-                if (widget.isViewer)
-                  SizedBox(height: 100),
-                if (widget.isViewer)
+                ProfilePortfolioWidget(userId: userId, isViewer: widget.isViewer),
+
+                // Dropdown to jump to sections
+                const SizedBox(height: 60),
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      // Implement your hire action here (e.g., open contact form, send message, etc.)
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Hire request sent!')),
-                      );
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: DropdownButtonFormField<String>(
+                    decoration: const InputDecoration(
+                      labelText: "Go to section",
+                      border: OutlineInputBorder(),
+                    ),
+                    items: [
+                      DropdownMenuItem(value: "name", child: Text("Name")),
+                      DropdownMenuItem(value: "badges", child: Text("Badges")),
+                      DropdownMenuItem(value: "contact", child: Text("Contact Details")),
+                      DropdownMenuItem(value: "work", child: Text("Work History")),
+                      DropdownMenuItem(value: "skills", child: Text("Skills")),
+                      DropdownMenuItem(value: "training", child: Text("Training/Certifications")),
+                      DropdownMenuItem(value: "showcase", child: Text("Work Showcase")),
+                    ],
+                    onChanged: (value) {
+                      if (value == "name") _scrollToSection(nameKey);
+                      if (value == "badges") _scrollToSection(badgesKey);
+                      if (value == "contact") _scrollToSection(contactKey);
+                      if (value == "work") _scrollToSection(workHistoryKey);
+                      if (value == "skills") _scrollToSection(skillsKey);
+                      if (value == "training") _scrollToSection(trainingKey);
+                      if (value == "showcase") _scrollToSection(showcaseKey);
                     },
-                    icon: const Icon(Icons.handshake),
-                    label: const Text(
-                      'Hire Me',
-                      style: TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.w600),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 24, vertical: 12),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                      backgroundColor: Theme
-                          .of(context)
-                          .colorScheme
-                          .primary,
-                      foregroundColor: Colors.white,
-                      elevation: 4,
-                    ),
                   ),
                 ),
 
-                SizedBox(height: 50),
-                NameWidget(userId: userId, isViewer: widget.isViewer,),
-                BadgesWidget(userId: userId,),
-                ContactDetailsWidget(userId: userId, isViewer: widget.isViewer),
-                WorkHistoryWidget(userId: userId, isViewer: widget.isViewer),
-                SkillsWidget(userId: userId, isViewer: widget.isViewer),
-                TrainingCertificationsWidget(userId: userId, isViewer: widget.isViewer),
-                WorkShowcaseWidget(userId: userId, isViewer: widget.isViewer),
+
+                if (widget.isViewer)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Hire request sent!')),
+                        );
+                      },
+                      icon: const Icon(Icons.handshake),
+                      label: const Text('Hire Me', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        foregroundColor: Colors.white,
+                        elevation: 4,
+                      ),
+                    ),
+                  ),
+
+                const SizedBox(height: 50),
+                NameWidget(key: nameKey, userId: userId, isViewer: widget.isViewer),
+                BadgesWidget(key: badgesKey, userId: userId),
+                ContactDetailsWidget(key: contactKey, userId: userId, isViewer: widget.isViewer),
+                WorkHistoryWidget(key: workHistoryKey, userId: userId, isViewer: widget.isViewer),
+                SkillsWidget(key: skillsKey, userId: userId, isViewer: widget.isViewer),
+                TrainingCertificationsWidget(key: trainingKey, userId: userId, isViewer: widget.isViewer),
+                WorkShowcaseWidget(key: showcaseKey, userId: userId, isViewer: widget.isViewer),
               ],
             ),
           ),
