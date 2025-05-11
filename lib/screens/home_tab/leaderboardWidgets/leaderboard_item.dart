@@ -25,6 +25,7 @@ class LeaderBoardItem extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         children: [
+          SizedBox(width: 10,),
           SizedBox(
             width: 28,
             child: Text(

@@ -96,12 +96,14 @@ class _FullLeaderboardScreenState extends State<FullLeaderboardScreen> {
                 final isCurrentUser =
                     user.userId == FirebaseAuth.instance.currentUser?.uid;
 
-                return LeaderBoardItem(
-                  rank: index + 1,
-                  name: user.name,
-                  points: user.totalPoints,
-                  isCurrentUser: isCurrentUser,
-                  isFullLeaderboard: true,
+                return Card(
+                  child: LeaderBoardItem(
+                    rank: index + 1,
+                    name: user.name,
+                    points: user.totalPoints,
+                    isCurrentUser: isCurrentUser,
+                    isFullLeaderboard: true,
+                  ),
                 );
               }),
 
