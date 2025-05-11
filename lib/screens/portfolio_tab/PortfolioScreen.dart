@@ -17,9 +17,10 @@ import 'widgets/contact_widget.dart';
 
 class PortfolioScreen extends StatefulWidget {
   final bool isViewer;
+
   const PortfolioScreen({
     super.key,
-    required this.isViewer,   // Defaults to false (owner mode)
+    required this.isViewer, // Defaults to false (owner mode)
   });
 
   @override
@@ -38,7 +39,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
       builder: (context) {
         return AlertDialog(
           title: const Text('Scan to view portfolio'),
-          content: SizedBox(   // ⬅️ wrap in SizedBox to constrain size
+          content: SizedBox( // ⬅️ wrap in SizedBox to constrain size
             width: 250,
             height: 300,
             child: Column(
@@ -47,7 +48,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                 QrImageView(
                   data: portfolioLink,
                   version: QrVersions.auto,
-                  size: 200.0,   // ⬅️ fixed size is okay now
+                  size: 200.0, // ⬅️ fixed size is okay now
                 ),
                 const SizedBox(height: 10),
                 Text(portfolioLink, style: const TextStyle(fontSize: 12)),
@@ -65,7 +66,6 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
         );
       },
     );
-
   }
 
   @override
@@ -184,34 +184,41 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                 ProfilePortfolioWidget(userId: userId, isViewer: widget.isViewer,),
                 if (widget.isViewer)
                   SizedBox(height: 100),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        // Implement your hire action here (e.g., open contact form, send message, etc.)
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Hire request sent!')),
-                        );
-                      },
-                      icon: const Icon(Icons.handshake),
-                      label: const Text(
-                        'Hire Me',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor: Colors.white,
-                        elevation: 4,
-                      ),
+                if (widget.isViewer)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      // Implement your hire action here (e.g., open contact form, send message, etc.)
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Hire request sent!')),
+                      );
+                    },
+                    icon: const Icon(Icons.handshake),
+                    label: const Text(
+                      'Hire Me',
+                      style: TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      backgroundColor: Theme
+                          .of(context)
+                          .colorScheme
+                          .primary,
+                      foregroundColor: Colors.white,
+                      elevation: 4,
                     ),
                   ),
+                ),
 
                 SizedBox(height: 50),
-                NameWidget(userId: userId,),
+                NameWidget(userId: userId, isViewer: widget.isViewer,),
                 BadgesWidget(userId: userId,),
-                ContactDetailsWidget(userId: userId,isViewer: widget.isViewer),
+                ContactDetailsWidget(userId: userId, isViewer: widget.isViewer),
                 WorkHistoryWidget(userId: userId, isViewer: widget.isViewer),
                 SkillsWidget(userId: userId, isViewer: widget.isViewer),
                 TrainingCertificationsWidget(userId: userId, isViewer: widget.isViewer),

@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 
 class NameWidget extends StatefulWidget {
   final String userId;
-
-  const NameWidget({super.key, required this.userId});
+  final bool isViewer;
+  const NameWidget({super.key, required this.userId, required this.isViewer});
 
   @override
   State<NameWidget> createState() => _NameWidgetState();
@@ -109,7 +109,7 @@ class _NameWidgetState extends State<NameWidget> {
                     style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(jobTitle, style: const TextStyle(fontSize: 14, color: Colors.grey)),
-                  trailing: IconButton(
+                  trailing: widget.isViewer? null : IconButton(
                     icon: const Icon(Icons.edit),
                     onPressed: () => _showEditDialog(data),
                   ),
