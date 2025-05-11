@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mad005/screens/document_scan_tab/DocumentScanScreen.dart';
 import 'package:mad005/screens/home_tab/HomeScreen.dart';
 import 'package:mad005/screens/portfolio_tab/PortfolioScreen.dart';
+import 'package:mad005/screens/quiz_tab/QuizScreen.dart';
 import 'package:mad005/screens/settings_tab/SettingsScreen.dart';
 
 import '../helper/auth_service.dart';
@@ -107,7 +108,7 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
             HomeScreen(tabController: _tabController), // Pass TabController here
             const DocumentScanScreen(),
             const PortfolioScreen(),
-            const Icon(Icons.settings),
+            const QuizScreen(),
             const SettingsPage(),
           ],
         ),
