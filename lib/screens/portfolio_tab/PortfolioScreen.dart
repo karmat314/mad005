@@ -183,8 +183,6 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                 SkillsWidget(userId: userId),
                 TrainingCertificationsWidget(userId: userId),
                 WorkShowcaseWidget(userId: userId),
-                // occupation
-                // description
               ],
             ),
           ),

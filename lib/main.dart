@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'My App',
+      //darkTheme: ThemeData.dark(),
       theme: ThemeData(
         primarySwatch: Colors.amber, // <-- Nice yellow shade here!
         colorScheme: ColorScheme.fromSwatch(

@@ -105,10 +105,25 @@ class _ProfilePortfolioWidgetState extends State<ProfilePortfolioWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    // Responsive values
+    final isSmallScreen = screenWidth < 350;
+    final isLargeScreen = screenWidth > 600;
+
+    final cardRadius = isSmallScreen ? 8.0 : 12.0;
+    final backgroundHeight = isSmallScreen ? 120.0 : (isLargeScreen ? 180.0 : 150.0);
+    final avatarRadius = isSmallScreen ? 50.0 : (isLargeScreen ? 70.0 : 60.0);
+    final avatarTopPosition = backgroundHeight - avatarRadius;
+    final avatarHorizontalOffset = screenWidth / 2 - avatarRadius ;
+    final iconSize = isSmallScreen ? 80.0 : (isLargeScreen ? 120.0 : 100.0);
+    final editIconSize = isSmallScreen ? 18.0 : 24.0;
+
     return Card(
       elevation: 4,
       margin: const EdgeInsets.all(0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(cardRadius)),
       child: Padding(
         padding: const EdgeInsets.all(0),
         child: Stack(
@@ -116,58 +131,64 @@ class _ProfilePortfolioWidgetState extends State<ProfilePortfolioWidget> {
           children: [
             // Background Image (Cover photo)
             ClipRRect(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(cardRadius - 4), // Slightly smaller than card radius
               child: _backgroundImage != null && _backgroundImage!.existsSync()
                   ? Image.file(
                 _backgroundImage!,
                 width: double.infinity,
-                height: 150,
+                height: backgroundHeight,
                 fit: BoxFit.cover,
               )
                   : Container(
                 width: double.infinity,
-                height: 150,
+                height: backgroundHeight,
                 color: Colors.grey[300],
-                child: Icon(Icons.image, size: 100),
+                child: Icon(Icons.image, size: iconSize),
               ),
             ),
             // Profile Picture (Avatar)
             Positioned(
-              top: 100, // Position it halfway down the background image
-              left: MediaQuery.of(context).size.width / 2 - 70, // Center horizontally
-              child: CircleAvatar(
-                radius: 50,
-                backgroundImage: _profileImage != null && _profileImage!.existsSync()
-                    ? FileImage(_profileImage!)
-                    : null,
-                child: (_profileImage == null || !_profileImage!.existsSync())
-                    ? Icon(Icons.account_circle, size: 100)
-                    : null,
+              top: avatarTopPosition,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: CircleAvatar(
+                  radius: avatarRadius,
+                  backgroundImage: _profileImage != null && _profileImage!.existsSync()
+                      ? FileImage(_profileImage!)
+                      : null,
+                  child: (_profileImage == null || !_profileImage!.existsSync())
+                      ? Icon(Icons.account_circle, size: iconSize)
+                      : null,
+                ),
               ),
             ),
+
             // Edit icon for background image
             Positioned(
               top: 10,
               right: 10,
               child: IconButton(
-                icon: Icon(Icons.edit, color: Colors.white),
+                icon: Icon(Icons.edit, color: Colors.white, size: editIconSize),
                 onPressed: () => _pickImage(false),
               ),
             ),
             // Edit icon for profile image
             Positioned(
               bottom: 10,
-              right: 100,
+              right: avatarHorizontalOffset + avatarRadius - editIconSize - 60,
               child: IconButton(
-                icon: Icon(Icons.edit),
+                icon: Icon(Icons.edit, size: editIconSize),
                 onPressed: () => _pickImage(true),
               ),
             ),
             // Show progress indicator if uploading
             if (_isUploading)
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: CircularProgressIndicator(),
+              Center(
+                child: Padding(
+                  padding: EdgeInsets.only(top: backgroundHeight / 2),
+                  child: CircularProgressIndicator(),
+                ),
               ),
           ],
         ),

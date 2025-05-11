@@ -148,8 +148,15 @@ class _SkillsWidgetState extends State<SkillsWidget> {
                       onDeleted: () => _showDeleteSkillDialog(doc.reference, skill),
                       deleteIcon: const Icon(Icons.close),
                       deleteButtonTooltipMessage: 'Delete skill',
-                      backgroundColor: Colors.blue[50],
-                      labelStyle: const TextStyle(fontWeight: FontWeight.w500),
+                      backgroundColor: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.blue[900]?.withOpacity(0.3)  // Dark mode
+                          : Colors.blue[50],                   // Light mode
+                      labelStyle: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.blue[100]                  // Dark mode text color
+                            : null,                            // Default light mode color
+                      ),
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     );
                   }).toList(),

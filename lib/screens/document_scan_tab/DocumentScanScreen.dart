@@ -178,14 +178,19 @@ class _DocumentScanScreenState extends State<DocumentScanScreen> {
         key: _key,
         type: ExpandableFabType.up,
         overlayStyle: ExpandableFabOverlayStyle(
-          color: Colors.white.withOpacity(0.9),
+          color: Theme.of(context).colorScheme.surface.withOpacity(0.9),
         ),
         childrenAnimation: ExpandableFabAnimation.none,
         distance: 70,
         children: [
           Row(
             children: [
-              const Text('Upload File'),
+              Text(
+                'Upload File',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
               const SizedBox(width: 20),
               FloatingActionButton.small(
                 heroTag: null,
@@ -193,13 +198,21 @@ class _DocumentScanScreenState extends State<DocumentScanScreen> {
                   await uploadService.uploadFileAndSave(context);
                   documentsListKey.currentState?.refreshDocuments();
                 },
-                child: const Icon(Icons.upload_file),
+                child: Icon(
+                  Icons.upload_file,
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                ),
               ),
             ],
           ),
           Row(
             children: [
-              const Text('Upload Audio'),
+              Text(
+                'Upload Audio',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
               const SizedBox(width: 20),
               FloatingActionButton.small(
                 heroTag: null,
@@ -207,13 +220,21 @@ class _DocumentScanScreenState extends State<DocumentScanScreen> {
                   await uploadService.uploadAudio(context);
                   documentsListKey.currentState?.refreshDocuments();
                 },
-                child: const Icon(Icons.mic),
+                child: Icon(
+                  Icons.mic,
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                ),
               ),
             ],
           ),
           Row(
             children: [
-              const Text('Scan with Camera'),
+              Text(
+                'Scan with Camera',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
               const SizedBox(width: 20),
               FloatingActionButton.small(
                 heroTag: null,
@@ -221,7 +242,10 @@ class _DocumentScanScreenState extends State<DocumentScanScreen> {
                   scanAndSave();
                   documentsListKey.currentState?.refreshDocuments();
                 },
-                child: const Icon(Icons.camera_alt),
+                child: Icon(
+                  Icons.camera_alt,
+                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                ),
               ),
             ],
           ),
