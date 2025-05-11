@@ -34,12 +34,12 @@ class _TakeQuizScreenState extends State<TakeQuizScreen> {
     if (userId != null) {
       final userRef = FirebaseFirestore.instance.collection('users').doc(userId);
 
-      // SAFELY sanitize the quiz title for Firestore doc ID
+      // sanitize the quiz title for Firestore doc ID
       String sanitizeQuizTitle(String title) {
         return title
             .replaceAll(RegExp(r'[^\w\s]+'), '') // Remove special characters
             .replaceAll(' ', '_')                // Replace spaces with underscores
-            .toLowerCase();                      // Optional: make lowercase
+            .toLowerCase();                      // make lowercase
       }
 
       final sanitizedQuizTitle = sanitizeQuizTitle(quizTitle);

@@ -15,7 +15,8 @@ class LeaderboardWidget extends StatefulWidget {
 class _LeaderboardWidgetState extends State<LeaderboardWidget> {
   final FirebaseFirestore db = FirebaseFirestore.instance;
   String totalPoints = "Loading...";
-  List<LeaderboardUser> topUsers = []; // Holds top 3 users
+  List<LeaderboardUser> topUsers = [];
+  List<LeaderboardUser> allUsers = [];// Holds top 3 users
 
   @override
   void initState() {
