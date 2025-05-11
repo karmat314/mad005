@@ -37,7 +37,6 @@ class _BadgesWidgetState extends State<BadgesWidget> {
           achievementList.add({
             'userId': widget.userId,
             'quizTitle': quizDoc['quizTitle'],
-            'totalPoints': quizDoc['totalPoints'],
             'timestamp': quizDoc['timestamp'],
           });
         }
@@ -82,7 +81,6 @@ class _BadgesWidgetState extends State<BadgesWidget> {
                   child: ListTile(
                     leading: const Icon(Icons.emoji_events, color: Colors.amber),
                     title: Text(quiz['quizTitle']),
-                    subtitle: Text('Points: ${quiz['totalPoints']}'),
                     trailing: Text(
                       quiz['timestamp'] != null
                           ? (quiz['timestamp'] as Timestamp).toDate().toString().split(' ').first
