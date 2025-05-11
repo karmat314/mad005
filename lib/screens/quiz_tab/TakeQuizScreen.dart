@@ -23,6 +23,10 @@ class _TakeQuizScreenState extends State<TakeQuizScreen> {
   int correctAnswers = 0;
   int totalPoints = 0;
 
+  late final maxPossiblePoints;
+  late final percentage;
+  late final achievementAwarded;
+
   Future<void> saveQuizAttempt(String quizTitle, int totalPoints) async {
     final user = FirebaseAuth.instance.currentUser;
     final userId = user?.uid;
@@ -40,13 +44,20 @@ class _TakeQuizScreenState extends State<TakeQuizScreen> {
 
       final sanitizedQuizTitle = sanitizeQuizTitle(quizTitle);
 
+      // Calculate achievement
+      maxPossiblePoints = widget.questions.length * 10;
+      percentage = (totalPoints / maxPossiblePoints) * 100;
+      achievementAwarded = percentage >= 80;
+
       await userRef.collection('attemptedQuizzes').doc(sanitizedQuizTitle).set({
         'quizTitle': quizTitle,
         'totalPoints': totalPoints,
         'timestamp': FieldValue.serverTimestamp(),
+        'achievementAwarded': achievementAwarded,   // 🥳 New field here!
       });
     }
   }
+
 
 
 
@@ -94,7 +105,6 @@ class _TakeQuizScreenState extends State<TakeQuizScreen> {
     final question = widget.questions[currentIndex];
     final questionText = question['text'];
     final options = List<String>.from(question['options']);
-    final correctanswer = question['correctanswer'];
 
     return Scaffold(
       appBar: AppBar(
@@ -166,9 +176,33 @@ class _TakeQuizScreenState extends State<TakeQuizScreen> {
                         context: context,
                         builder: (context) => AlertDialog(
                           title: const Text('Quiz Finished'),
-                          content: Text(
-                            'You correctly answered $correctAnswers out of ${widget.questions.length} questions.\n\n'
-                                'Total Points: $totalPoints',
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (achievementAwarded) ...[
+                                Row(
+                                  children: const [
+                                    Icon(Icons.emoji_events, color: Colors.amber, size: 30),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      'Achievement Unlocked!',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.amber,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                              ],
+                              Text(
+                                'You correctly answered $correctAnswers out of ${widget.questions.length} questions.\n\n'
+                                    'Total Points: $totalPoints\n'
+                                    'Score: ${percentage.toStringAsFixed(1)}%',
+                              ),
+                            ],
                           ),
                           actions: [
                             TextButton(
@@ -180,6 +214,7 @@ class _TakeQuizScreenState extends State<TakeQuizScreen> {
                           ],
                         ),
                       );
+
                     }
                   },
                   child: Text(currentIndex < widget.questions.length - 1 ? 'Next' : 'Finish'),
