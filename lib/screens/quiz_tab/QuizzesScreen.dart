@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'TakeQuizScreen.dart';
 
 class QuizScreen extends StatefulWidget {
@@ -35,13 +36,14 @@ class QuizScreenState extends State<QuizScreen> {
         'quizTitle': doc['quizTitle'],
         'totalPoints': doc['totalPoints'],
         'timestamp': doc['timestamp'],
-        'achievementAwarded': doc['achievementAwarded']
+        'achievementAwarded': doc['achievementAwarded'] ?? false,
       };
     }).toList();
 
     setState(() {
       attemptedQuizzes = attempts;
-      attemptedQuizTitles = attempts.map((e) => e['quizTitle'] as String).toList();
+      attemptedQuizTitles =
+          attempts.map((e) => e['quizTitle'] as String).toList();
     });
   }
 
@@ -106,8 +108,8 @@ class QuizScreenState extends State<QuizScreen> {
             final title = quiz['title'] ?? '';
             final description = quiz['description'] ?? '';
             final difficulty = quiz['difficulty'] ?? 'Unknown';
+            final videoUrl = quiz['video'] ?? '';
 
-            // Find attempt
             final attempt = attemptedQuizzes.firstWhere(
                   (a) => a['quizTitle'] == title,
               orElse: () => {},
@@ -115,13 +117,14 @@ class QuizScreenState extends State<QuizScreen> {
 
             final scoredPoints = attempt['totalPoints'] ?? 0;
             final attemptDate = attempt['timestamp'] != null
-                ? (attempt['timestamp'] as Timestamp).toDate().toString().split(' ').first
+                ? (attempt['timestamp'] as Timestamp)
+                .toDate()
+                .toString()
+                .split(' ')
+                .first
                 : '';
 
-            final achievementAwarded = attempt['achievementAwarded'] == true;
-            if (achievementAwarded) {
-              print('asdfasdf');
-            }
+            final achievementAwarded = attempt['achievementAwarded'] ?? false;
 
             return Card(
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -136,7 +139,8 @@ class QuizScreenState extends State<QuizScreen> {
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
                     Text(description),
@@ -149,6 +153,28 @@ class QuizScreenState extends State<QuizScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
+
+                    /// Embed YouTube player if videoUrl is not empty
+                    if (videoUrl.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: YoutubePlayer(
+                          controller: YoutubePlayerController(
+                            initialVideoId:
+                            YoutubePlayer.convertUrlToId(videoUrl)!,
+                            flags: const YoutubePlayerFlags(
+                              autoPlay: false,
+                              mute: false,
+                            ),
+                          ),
+                          showVideoProgressIndicator: true,
+                          progressIndicatorColor: Colors.red,
+                          progressColors: const ProgressBarColors(
+                              playedColor: Colors.red, handleColor: Colors.red),
+                        ),
+                      ),
+
+                    /// Question Count + Points
                     FutureBuilder<QuerySnapshot>(
                       future: db
                           .collection('quizzes')
@@ -156,7 +182,8 @@ class QuizScreenState extends State<QuizScreen> {
                           .collection('questions')
                           .get(),
                       builder: (context, questionSnapshot) {
-                        if (questionSnapshot.connectionState == ConnectionState.waiting) {
+                        if (questionSnapshot.connectionState ==
+                            ConnectionState.waiting) {
                           return const Text('Loading questions...');
                         }
 
@@ -164,38 +191,41 @@ class QuizScreenState extends State<QuizScreen> {
                           return const Text('Error loading questions');
                         }
 
-                        final questionCount = questionSnapshot.data?.docs.length ?? 0;
+                        final questionCount =
+                            questionSnapshot.data?.docs.length ?? 0;
                         final totalPoints = questionCount * 10;
 
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text('$questionCount questions • $totalPoints points',
-                                style: const TextStyle(fontStyle: FontStyle.italic)),
+                                style: const TextStyle(
+                                    fontStyle: FontStyle.italic)),
                             if (showAttempted)
-                              Text('You scored: $scoredPoints points on $attemptDate',
-                                  style: const TextStyle(fontWeight: FontWeight.bold)),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('You scored: $scoredPoints points on $attemptDate',
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    achievementAwarded
+                                        ? '🏆 Achievement Awarded'
+                                        : 'No achievement yet',
+                                    style: TextStyle(
+                                      color: achievementAwarded
+                                          ? Colors.green
+                                          : Colors.grey,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
                           ],
                         );
                       },
                     ),
-                    if (showAttempted && achievementAwarded)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Row(
-                          children: const [
-                            Icon(Icons.emoji_events, color: Colors.amber),
-                            SizedBox(width: 8),
-                            Text(
-                              'Achievement Unlocked!',
-                              style: TextStyle(
-                                color: Colors.amber,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
                     const SizedBox(height: 16),
                     Align(
                       alignment: Alignment.centerRight,
@@ -207,7 +237,9 @@ class QuizScreenState extends State<QuizScreen> {
                               .collection('questions')
                               .get();
 
-                          final questions = questionsSnapshot.docs.map((doc) => doc.data()).toList();
+                          final questions = questionsSnapshot.docs
+                              .map((doc) => doc.data())
+                              .toList();
 
                           Navigator.push(
                             context,
@@ -219,7 +251,8 @@ class QuizScreenState extends State<QuizScreen> {
                             ),
                           );
                         },
-                        child: Text(showAttempted ? 'Retake Quiz' : 'Take Quiz'),
+                        child:
+                        Text(showAttempted ? 'Retake Quiz' : 'Take Quiz'),
                       ),
                     ),
                   ],
@@ -231,7 +264,6 @@ class QuizScreenState extends State<QuizScreen> {
       },
     );
   }
-
 
   Color difficultyColor(String difficulty) {
     switch (difficulty.toLowerCase()) {
