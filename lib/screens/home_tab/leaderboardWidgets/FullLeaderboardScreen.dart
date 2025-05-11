@@ -119,6 +119,8 @@ class _FullLeaderboardScreenState extends State<FullLeaderboardScreen> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
+            Text("See who's topping the charts in skills and knowledge"),
+            SizedBox(height: 10,),
             // Search bar
             TextField(
               decoration: InputDecoration(
@@ -138,7 +140,7 @@ class _FullLeaderboardScreenState extends State<FullLeaderboardScreen> {
             DropdownButtonFormField<String>(
               value: selectedJobTitle,
               decoration: InputDecoration(
-                labelText: 'Filter by job title',
+                labelText: 'Filter by trade',
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
               items: jobTitles.map((title) {

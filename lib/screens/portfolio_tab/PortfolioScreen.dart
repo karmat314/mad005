@@ -96,7 +96,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Your Portfolio')),
+      appBar: AppBar(title: const Text('Portfolio')),
       floatingActionButtonLocation: ExpandableFab.location,
       floatingActionButton: ExpandableFab(
         key: _key,

@@ -127,24 +127,34 @@ class _LeaderboardWidgetState extends State<LeaderboardWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Total points title
             Text(
-              "Your total points",
-              style: TextStyle(fontSize: 20),
+              "Your Total Points",
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 8),
+
+            // Total points value
             Text(
               totalPoints,
               style: TextStyle(
-                fontSize: 60,
+                fontSize: 50,
                 fontWeight: FontWeight.bold,
                 color: colorScheme.primary,
               ),
             ),
-            const SizedBox(height: 8),
-            Text("Keep completing quizzes to earn more!"),
-            const SizedBox(height: 16),
+            const SizedBox(height: 4),
+            Text(
+              "Keep completing quizzes to earn more!",
+              style: TextStyle(color: Colors.grey[600]),
+            ),
 
-            // Top 3 Leaderboard Highlights
+            const SizedBox(height: 24),
+
+            // Leaderboard title
             Text(
               "Leaderboard Highlights",
               style: TextStyle(
@@ -152,7 +162,47 @@ class _LeaderboardWidgetState extends State<LeaderboardWidget> {
                 fontWeight: FontWeight.bold,
               ),
             ),
+            const SizedBox(height: 12),
 
+            // Header row
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: Text(
+                    "Rank",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey[700],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 3,
+                  child: Text(
+                    "Name",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey[700],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    "Points",
+                    textAlign: TextAlign.end,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey[700],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const Divider(thickness: 1, height: 16),
+
+            // Leaderboard items
             if (topUsers.isEmpty)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -165,33 +215,69 @@ class _LeaderboardWidgetState extends State<LeaderboardWidget> {
                 final isCurrentUser =
                     user.userId == FirebaseAuth.instance.currentUser?.uid;
 
-                return LeaderBoardItem(
-                  rank: index + 1,
-                  name: user.name,
-                  points: user.totalPoints,
-                  isCurrentUser: isCurrentUser,
+                final rank = index + 1;
+
+                // Medal icon for top 3
+                Widget rankWidget;
+                if (rank == 1) {
+                  rankWidget = Icon(Icons.emoji_events, color: Colors.amber, size: 24);
+                } else if (rank == 2) {
+                  rankWidget = Icon(Icons.emoji_events, color: Colors.grey, size: 24);
+                } else if (rank == 3) {
+                  rankWidget = Icon(Icons.emoji_events, color: Colors.brown, size: 24);
+                } else {
+                  rankWidget = Text(
+                    '$rank',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  );
+                }
+
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Row(
+                    children: [
+                      Expanded(flex: 1, child: Center(child: rankWidget)),
+                      Expanded(
+                        flex: 3,
+                        child: Text(
+                          user.name,
+                          style: TextStyle(
+                            fontWeight: isCurrentUser ? FontWeight.bold : FontWeight.normal,
+                            color: isCurrentUser ? colorScheme.primary : null,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          user.totalPoints.toString(),
+                          textAlign: TextAlign.end,
+                          style: TextStyle(
+                            fontWeight: isCurrentUser ? FontWeight.bold : FontWeight.normal,
+                            color: isCurrentUser ? colorScheme.primary : null,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 );
               }),
 
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
             Align(
               alignment: Alignment.centerRight,
-              child: TextButton(
+              child: OutlinedButton(
                 onPressed: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder:
-                          (context) => FullLeaderboardScreen()
+                      builder: (context) => FullLeaderboardScreen(),
                     ),
                   );
                 },
                 child: Text(
                   "View Full Leaderboard",
-                  style: TextStyle(
-                    color: colorScheme.primary,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.w600),
                 ),
               ),
             ),
