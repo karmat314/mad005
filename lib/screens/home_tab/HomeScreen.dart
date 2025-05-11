@@ -29,8 +29,8 @@ class _HomeScreenState extends State<HomeScreen> {
     },
     {
       'icon': Icons.quiz,
-      'title': 'Portfolio',
-      'subtitle': 'Manage your portfolio',
+      'title': 'Quizzes',
+      'subtitle': 'Complete quizzes to earn achievements',
       'tabIndex': 3,
     },
     // Add more features here as needed
@@ -119,7 +119,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Column(
       children: [
-        _buildTopCard("Your points balance", cardMargin, cardPadding, cardHeight),
         LeaderboardWidget(),
         _buildTopCard("Grow our career", cardMargin, cardPadding, cardHeight),
         _buildTopCard("Stay Updated", cardMargin, cardPadding, cardHeight),
