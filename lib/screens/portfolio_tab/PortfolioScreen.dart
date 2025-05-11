@@ -181,80 +181,119 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
         ],
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          controller: _scrollController, // ⬅️ attach scroll controller
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                ProfilePortfolioWidget(userId: userId, isViewer: widget.isViewer),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final isWide = constraints.maxWidth > 600;
 
-                // Dropdown to jump to sections
-                const SizedBox(height: 60),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: DropdownButtonFormField<String>(
-                    decoration: const InputDecoration(
-                      labelText: "Go to section",
-                      border: OutlineInputBorder(),
-                    ),
-                    items: [
-                      DropdownMenuItem(value: "name", child: Text("Name")),
-                      DropdownMenuItem(value: "badges", child: Text("Badges")),
-                      DropdownMenuItem(value: "contact", child: Text("Contact Details")),
-                      DropdownMenuItem(value: "work", child: Text("Work History")),
-                      DropdownMenuItem(value: "skills", child: Text("Skills")),
-                      DropdownMenuItem(value: "training", child: Text("Training/Certifications")),
-                      DropdownMenuItem(value: "showcase", child: Text("Work Showcase")),
-                    ],
-                    onChanged: (value) {
-                      if (value == "name") _scrollToSection(nameKey);
-                      if (value == "badges") _scrollToSection(badgesKey);
-                      if (value == "contact") _scrollToSection(contactKey);
-                      if (value == "work") _scrollToSection(workHistoryKey);
-                      if (value == "skills") _scrollToSection(skillsKey);
-                      if (value == "training") _scrollToSection(trainingKey);
-                      if (value == "showcase") _scrollToSection(showcaseKey);
-                    },
-                  ),
-                ),
+            final sectionWidgets = [
+              NameWidget(key: nameKey, userId: userId, isViewer: widget.isViewer),
+              BadgesWidget(key: badgesKey, userId: userId),
+              ContactDetailsWidget(key: contactKey, userId: userId, isViewer: widget.isViewer),
+              WorkHistoryWidget(key: workHistoryKey, userId: userId, isViewer: widget.isViewer),
+              SkillsWidget(key: skillsKey, userId: userId, isViewer: widget.isViewer),
+              TrainingCertificationsWidget(key: trainingKey, userId: userId, isViewer: widget.isViewer),
+              WorkShowcaseWidget(key: showcaseKey, userId: userId, isViewer: widget.isViewer),
+            ];
 
+            Widget buildContent() {
+              if (isWide) {
+                // Split into two roughly equal columns
+                final mid = (sectionWidgets.length / 2).ceil();
+                final leftColumn = sectionWidgets.sublist(0, mid);
+                final rightColumn = sectionWidgets.sublist(mid);
 
-                if (widget.isViewer)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Hire request sent!')),
-                        );
-                      },
-                      icon: const Icon(Icons.handshake),
-                      label: const Text('Hire Me', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        backgroundColor: Theme.of(context).colorScheme.primary,
-                        foregroundColor: Colors.white,
-                        elevation: 4,
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: leftColumn,
                       ),
                     ),
-                  ),
+                    const SizedBox(width: 24), // space between columns
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: rightColumn,
+                      ),
+                    ),
+                  ],
+                );
+              } else {
+                // Default single column
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: sectionWidgets,
+                );
+              }
+            }
 
-                const SizedBox(height: 50),
-                NameWidget(key: nameKey, userId: userId, isViewer: widget.isViewer),
-                BadgesWidget(key: badgesKey, userId: userId),
-                ContactDetailsWidget(key: contactKey, userId: userId, isViewer: widget.isViewer),
-                WorkHistoryWidget(key: workHistoryKey, userId: userId, isViewer: widget.isViewer),
-                SkillsWidget(key: skillsKey, userId: userId, isViewer: widget.isViewer),
-                TrainingCertificationsWidget(key: trainingKey, userId: userId, isViewer: widget.isViewer),
-                WorkShowcaseWidget(key: showcaseKey, userId: userId, isViewer: widget.isViewer),
-              ],
-            ),
-          ),
+            return SingleChildScrollView(
+              controller: _scrollController,
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  ProfilePortfolioWidget(userId: userId, isViewer: widget.isViewer),
+                  const SizedBox(height: 60),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    child: DropdownButtonFormField<String>(
+                      decoration: const InputDecoration(
+                        labelText: "Go to section",
+                        border: OutlineInputBorder(),
+                      ),
+                      items: [
+                        DropdownMenuItem(value: "name", child: Text("Name")),
+                        DropdownMenuItem(value: "badges", child: Text("Badges")),
+                        DropdownMenuItem(value: "contact", child: Text("Contact Details")),
+                        DropdownMenuItem(value: "work", child: Text("Work History")),
+                        DropdownMenuItem(value: "skills", child: Text("Skills")),
+                        DropdownMenuItem(value: "training", child: Text("Training/Certifications")),
+                        DropdownMenuItem(value: "showcase", child: Text("Work Showcase")),
+                      ],
+                      onChanged: (value) {
+                        if (value == "name") _scrollToSection(nameKey);
+                        if (value == "badges") _scrollToSection(badgesKey);
+                        if (value == "contact") _scrollToSection(contactKey);
+                        if (value == "work") _scrollToSection(workHistoryKey);
+                        if (value == "skills") _scrollToSection(skillsKey);
+                        if (value == "training") _scrollToSection(trainingKey);
+                        if (value == "showcase") _scrollToSection(showcaseKey);
+                      },
+                    ),
+                  ),
+                  if (widget.isViewer)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Hire request sent!')),
+                          );
+                        },
+                        icon: const Icon(Icons.handshake),
+                        label: const Text('Hire Me', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          backgroundColor: Theme.of(context).colorScheme.primary,
+                          foregroundColor: Colors.white,
+                          elevation: 4,
+                        ),
+                      ),
+                    ),
+                  const SizedBox(height: 50),
+
+                  // 🎉 Here’s the responsive content!
+                  buildContent(),
+                ],
+              ),
+            );
+          },
         ),
       ),
+
     );
   }
 }
