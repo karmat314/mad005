@@ -1,0 +1,2 @@
+/Users/karmathapkhey/AndroidStudioProjects/mad005/android/app/.cxx/RelWithDebInfo/735u4ik6/arm64-v8a/CMakeFiles/edit_cache.dir
+/Users/karmathapkhey/AndroidStudioProjects/mad005/android/app/.cxx/RelWithDebInfo/735u4ik6/arm64-v8a/CMakeFiles/rebuild_cache.dir

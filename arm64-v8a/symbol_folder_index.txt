@@ -1,0 +1,1 @@
+/Users/karmathapkhey/AndroidStudioProjects/mad005/build/app/intermediates/cxx/RelWithDebInfo/735u4ik6/obj/arm64-v8a
