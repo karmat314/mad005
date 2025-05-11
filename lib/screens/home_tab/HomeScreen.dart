@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
     {
       'icon': Icons.quiz,
       'title': 'Quizzes',
-      'subtitle': 'Complete quizzes to earn achievements for your trade.',
+      'subtitle': 'Complete quizzes to earn achievements',
       'tabIndex': 3,
     },
     // Add more features here as needed
