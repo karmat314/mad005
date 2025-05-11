@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mad005/screens/home_tab/leaderboard_widget.dart';
 
 import 'core_feature_widget.dart';
 
@@ -113,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       children: [
         _buildTopCard("Your points balance", cardMargin, cardPadding, cardHeight),
-        _buildTopCard("Leaderboard", cardMargin, cardPadding, cardHeight),
+        LeaderboardWidget(),
         _buildTopCard("Grow our career", cardMargin, cardPadding, cardHeight),
         _buildTopCard("Stay Updated", cardMargin, cardPadding, cardHeight),
       ],
