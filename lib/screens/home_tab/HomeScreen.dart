@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mad005/screens/home_tab/leaderboard_widget.dart';
+import 'package:mad005/screens/home_tab/leaderboardWidgets/leaderboard_highlights_widget.dart';
 
 import 'core_feature_widget.dart';
 
