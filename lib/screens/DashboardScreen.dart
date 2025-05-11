@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mad005/screens/document_scan_tab/DocumentScanScreen.dart';
 import 'package:mad005/screens/home_tab/HomeScreen.dart';
 import 'package:mad005/screens/portfolio_tab/PortfolioScreen.dart';
-import 'package:mad005/screens/quiz_tab/QuizScreen.dart';
+import 'package:mad005/screens/quiz_tab/QuizzesScreen.dart';
 import 'package:mad005/screens/settings_tab/SettingsScreen.dart';
 
 import '../helper/auth_service.dart';

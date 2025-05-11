@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import 'TakeQuizScreen.dart';
+
 class QuizScreen extends StatefulWidget {
   const QuizScreen({super.key});
 
@@ -43,7 +45,9 @@ class QuizScreenState extends State<QuizScreen> {
               return Card(
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 elevation: 4,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
@@ -51,7 +55,10 @@ class QuizScreenState extends State<QuizScreen> {
                     children: [
                       Text(
                         title,
-                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 8),
                       Text(description),
@@ -65,9 +72,15 @@ class QuizScreenState extends State<QuizScreen> {
                       ),
                       const SizedBox(height: 8),
                       FutureBuilder<QuerySnapshot>(
-                        future: db.collection('quizzes').doc(quiz.id).collection('questions').get(),
+                        future:
+                            db
+                                .collection('quizzes')
+                                .doc(quiz.id)
+                                .collection('questions')
+                                .get(),
                         builder: (context, questionSnapshot) {
-                          if (questionSnapshot.connectionState == ConnectionState.waiting) {
+                          if (questionSnapshot.connectionState ==
+                              ConnectionState.waiting) {
                             return const Text('Loading questions...');
                           }
 
@@ -75,7 +88,8 @@ class QuizScreenState extends State<QuizScreen> {
                             return const Text('Error loading questions');
                           }
 
-                          final questionCount = questionSnapshot.data?.docs.length ?? 0;
+                          final questionCount =
+                              questionSnapshot.data?.docs.length ?? 0;
                           final totalPoints = questionCount * 10;
 
                           return Text(
@@ -88,12 +102,33 @@ class QuizScreenState extends State<QuizScreen> {
                       Align(
                         alignment: Alignment.centerRight,
                         child: ElevatedButton(
-                          onPressed: () {
-                            // No functionality yet
+                          onPressed: () async {
+                            final questionsSnapshot =
+                                await db
+                                    .collection('quizzes')
+                                    .doc(quiz.id)
+                                    .collection('questions')
+                                    .get();
+
+                            final questions =
+                                questionsSnapshot.docs
+                                    .map((doc) => doc.data())
+                                    .toList();
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => TakeQuizScreen(
+                                      quizTitle: quiz['title'],
+                                      questions: questions,
+                                    ),
+                              ),
+                            );
                           },
                           child: const Text('Take Quiz'),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
