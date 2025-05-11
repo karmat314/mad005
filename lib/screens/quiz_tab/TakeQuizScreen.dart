@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class TakeQuizScreen extends StatefulWidget {
@@ -20,6 +22,33 @@ class _TakeQuizScreenState extends State<TakeQuizScreen> {
 
   int correctAnswers = 0;
   int totalPoints = 0;
+
+  Future<void> saveQuizAttempt(String quizTitle, int totalPoints) async {
+    final user = FirebaseAuth.instance.currentUser;
+    final userId = user?.uid;
+
+    if (userId != null) {
+      final userRef = FirebaseFirestore.instance.collection('users').doc(userId);
+
+      // SAFELY sanitize the quiz title for Firestore doc ID
+      String sanitizeQuizTitle(String title) {
+        return title
+            .replaceAll(RegExp(r'[^\w\s]+'), '') // Remove special characters
+            .replaceAll(' ', '_')                // Replace spaces with underscores
+            .toLowerCase();                      // Optional: make lowercase
+      }
+
+      final sanitizedQuizTitle = sanitizeQuizTitle(quizTitle);
+
+      await userRef.collection('attemptedQuizzes').doc(sanitizedQuizTitle).set({
+        'quizTitle': quizTitle,
+        'totalPoints': totalPoints,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+    }
+  }
+
+
 
   // Navigate to the next question
   void nextQuestion() {
@@ -121,13 +150,18 @@ class _TakeQuizScreenState extends State<TakeQuizScreen> {
                   child: const Text('Previous'),
                 ),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     updateScore(); // update correctAnswers & totalPoints
 
                     if (currentIndex < widget.questions.length - 1) {
                       nextQuestion();
                     } else {
                       print(selectedAnswers);
+
+                      // Save the quiz attempt
+                      await saveQuizAttempt(widget.quizTitle, totalPoints);
+
+                      // Show results dialog
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
