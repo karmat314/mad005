@@ -15,6 +15,7 @@ class QuizScreenState extends State<QuizScreen> {
   final FirebaseFirestore db = FirebaseFirestore.instance;
   final String userId = FirebaseAuth.instance.currentUser!.uid;
 
+  String totalPoints = "Loading...";
   List<Map<String, dynamic>> attemptedQuizzes = [];
   List<String> attemptedQuizTitles = [];
 
@@ -22,6 +23,41 @@ class QuizScreenState extends State<QuizScreen> {
   void initState() {
     super.initState();
     fetchAttemptedQuizzes();
+    getUserTotalPoints();
+  }
+
+  Future<void> getUserTotalPoints() async {
+    final user = FirebaseAuth.instance.currentUser;
+    final userId = user?.uid;
+
+    if (userId != null) {
+      try {
+        final attemptedQuizzesRef = db
+            .collection('users')
+            .doc(userId)
+            .collection('attemptedQuizzes');
+
+        final querySnapshot = await attemptedQuizzesRef.get();
+
+        int points = 0;
+        for (var doc in querySnapshot.docs) {
+          points += (doc['totalPoints'] ?? 0) as int;
+        }
+
+        setState(() {
+          totalPoints = points.toString();
+        });
+      } catch (e) {
+        setState(() {
+          totalPoints = "Error fetching points";
+        });
+        print("Error: $e");
+      }
+    } else {
+      setState(() {
+        totalPoints = "User not logged in";
+      });
+    }
   }
 
   Future<void> fetchAttemptedQuizzes() async {
@@ -49,6 +85,7 @@ class QuizScreenState extends State<QuizScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -61,15 +98,36 @@ class QuizScreenState extends State<QuizScreen> {
             ],
           ),
         ),
-        body: TabBarView(
+        body: Column(
           children: [
-            buildQuizList(showAttempted: false),
-            buildQuizList(showAttempted: true),
+            const SizedBox(height: 16),
+            Text(
+              "Your total points",
+              style: TextStyle(fontSize: 20),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              totalPoints,
+              style: TextStyle(
+                fontSize: 60,
+                fontWeight: FontWeight.bold,
+                color: colorScheme.primary,
+              ),
+            ),
+            Expanded(
+              child: TabBarView(
+                children: [
+                  buildQuizList(showAttempted: false),
+                  buildQuizList(showAttempted: true),
+                ],
+              ),
+            ),
           ],
         ),
       ),
     );
   }
+
 
   Widget buildQuizList({required bool showAttempted}) {
     return StreamBuilder<QuerySnapshot>(
