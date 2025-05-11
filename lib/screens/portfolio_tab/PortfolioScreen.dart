@@ -16,7 +16,11 @@ import 'package:url_launcher/url_launcher.dart';
 import 'widgets/contact_widget.dart';
 
 class PortfolioScreen extends StatefulWidget {
-  const PortfolioScreen({super.key});
+  final bool isViewer;
+  const PortfolioScreen({
+    super.key,
+    required this.isViewer,   // Defaults to false (owner mode)
+  });
 
   @override
   State<PortfolioScreen> createState() => _PortfolioScreenState();
@@ -74,6 +78,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
     }
 
     return Scaffold(
+      appBar: AppBar(),
       floatingActionButtonLocation: ExpandableFab.location,
       floatingActionButton: ExpandableFab(
         key: _key,
@@ -176,15 +181,41 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                 // profile image
                 // verified by admin (ticked)
                 // username
-                ProfilePortfolioWidget(userId: userId),
+                ProfilePortfolioWidget(userId: userId, isViewer: widget.isViewer,),
+                if (widget.isViewer)
+                  SizedBox(height: 100),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        // Implement your hire action here (e.g., open contact form, send message, etc.)
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Hire request sent!')),
+                        );
+                      },
+                      icon: const Icon(Icons.handshake),
+                      label: const Text(
+                        'Hire Me',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        foregroundColor: Colors.white,
+                        elevation: 4,
+                      ),
+                    ),
+                  ),
+
                 SizedBox(height: 50),
                 NameWidget(userId: userId,),
                 BadgesWidget(userId: userId,),
-                ContactDetailsWidget(userId: userId),
-                WorkHistoryWidget(userId: userId),
-                SkillsWidget(userId: userId),
-                TrainingCertificationsWidget(userId: userId),
-                WorkShowcaseWidget(userId: userId),
+                ContactDetailsWidget(userId: userId,isViewer: widget.isViewer),
+                WorkHistoryWidget(userId: userId, isViewer: widget.isViewer),
+                SkillsWidget(userId: userId, isViewer: widget.isViewer),
+                TrainingCertificationsWidget(userId: userId, isViewer: widget.isViewer),
+                WorkShowcaseWidget(userId: userId, isViewer: widget.isViewer),
               ],
             ),
           ),

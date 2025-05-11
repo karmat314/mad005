@@ -107,7 +107,7 @@ class _DashboardScreenState extends State<DashboardScreen> with SingleTickerProv
           children: [
             HomeScreen(tabController: _tabController), // Pass TabController here
             const DocumentScanScreen(),
-            const PortfolioScreen(),
+            const PortfolioScreen(isViewer: false,),
             const QuizScreen(),
             const SettingsPage(),
           ],

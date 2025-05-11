@@ -5,8 +5,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 class ContactDetailsWidget extends StatefulWidget {
   final String userId;
-
-  const ContactDetailsWidget({super.key, required this.userId});
+  final bool isViewer;
+  const ContactDetailsWidget({super.key, required this.userId, required this.isViewer});
 
   @override
   State<ContactDetailsWidget> createState() => _ContactDetailsWidgetState();
@@ -119,6 +119,7 @@ class _ContactDetailsWidgetState extends State<ContactDetailsWidget> {
                     const SizedBox(width: 8),
                     const Text('Contact Details', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                     const Spacer(),
+                    if (!widget.isViewer)
                     IconButton(
                       icon: const Icon(Icons.edit),
                       onPressed: () => _showEditDialog(data),

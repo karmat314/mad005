@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import '../../portfolio_tab/PortfolioScreen.dart';
 
 class LeaderBoardItem extends StatelessWidget {
   final int rank;
@@ -69,7 +72,14 @@ class LeaderBoardItem extends StatelessWidget {
             IconButton(
               icon: Icon(Icons.arrow_forward_ios, size: 16),
               color: colorScheme.onSurfaceVariant,
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PortfolioScreen(isViewer: true,)
+                  ),
+                );
+              },
               splashRadius: 20,
             ),
           ]

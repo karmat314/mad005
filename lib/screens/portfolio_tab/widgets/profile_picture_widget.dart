@@ -8,10 +8,11 @@ import 'package:path/path.dart' as path;
 
 class ProfilePortfolioWidget extends StatefulWidget {
   final String userId;
-
+  final bool isViewer;
   const ProfilePortfolioWidget({
     super.key,
     required this.userId,
+    required this.isViewer
   });
 
   @override
@@ -165,15 +166,18 @@ class _ProfilePortfolioWidgetState extends State<ProfilePortfolioWidget> {
             ),
 
             // Edit icon for background image
-            Positioned(
-              top: 10,
-              right: 10,
-              child: IconButton(
-                icon: Icon(Icons.edit, color: Colors.white, size: editIconSize),
-                onPressed: () => _pickImage(false),
+            if (!widget.isViewer)
+              Positioned(
+                top: 10,
+                right: 10,
+                child: IconButton(
+                  icon: Icon(Icons.edit, color: Colors.white, size: editIconSize),
+                  onPressed: () => _pickImage(false),
+                ),
               ),
-            ),
+
             // Edit icon for profile image
+            if (!widget.isViewer)
             Positioned(
               bottom: 10,
               right: avatarHorizontalOffset + avatarRadius - editIconSize - 60,

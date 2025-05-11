@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 
 class SkillsWidget extends StatefulWidget {
   final String userId;
+  final bool isViewer;
 
-  const SkillsWidget({super.key, required this.userId});
+  const SkillsWidget({super.key, required this.userId, required this.isViewer});
 
   @override
   State<SkillsWidget> createState() => _SkillsWidgetState();
@@ -108,6 +109,7 @@ class _SkillsWidgetState extends State<SkillsWidget> {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
+                if(!widget.isViewer)
                 IconButton(
                   icon: const Icon(Icons.add),
                   onPressed: _showAddSkillDialog,
@@ -143,22 +145,37 @@ class _SkillsWidgetState extends State<SkillsWidget> {
                     final data = doc.data() as Map<String, dynamic>;
                     final skill = data['skill'] ?? '';
 
-                    return InputChip(
+                    return widget.isViewer
+                        ? InputChip(
+                      label: Text(skill),
+                      backgroundColor: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.blue[900]?.withOpacity(0.3)
+                          : Colors.blue[50],
+                      labelStyle: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.blue[100]
+                            : null,
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    )
+                        : InputChip(
                       label: Text(skill),
                       onDeleted: () => _showDeleteSkillDialog(doc.reference, skill),
                       deleteIcon: const Icon(Icons.close),
                       deleteButtonTooltipMessage: 'Delete skill',
                       backgroundColor: Theme.of(context).brightness == Brightness.dark
-                          ? Colors.blue[900]?.withOpacity(0.3)  // Dark mode
-                          : Colors.blue[50],                   // Light mode
+                          ? Colors.blue[900]?.withOpacity(0.3)
+                          : Colors.blue[50],
                       labelStyle: TextStyle(
                         fontWeight: FontWeight.w500,
                         color: Theme.of(context).brightness == Brightness.dark
-                            ? Colors.blue[100]                  // Dark mode text color
-                            : null,                            // Default light mode color
+                            ? Colors.blue[100]
+                            : null,
                       ),
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     );
+
                   }).toList(),
                 );
               },

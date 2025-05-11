@@ -6,8 +6,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:open_filex/open_filex.dart';
 class TrainingCertificationsWidget extends StatefulWidget {
   final String userId;
+  final bool isViewer;
 
-  const TrainingCertificationsWidget({super.key, required this.userId});
+  const TrainingCertificationsWidget({super.key, required this.userId, required this.isViewer});
 
   @override
   State<TrainingCertificationsWidget> createState() => _TrainingCertificationsWidgetState();
@@ -166,6 +167,7 @@ class _TrainingCertificationsWidgetState extends State<TrainingCertificationsWid
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
+                if(!widget.isViewer)
                 IconButton(
                   icon: const Icon(Icons.add),
                   onPressed: () => _showTrainingDialog(),

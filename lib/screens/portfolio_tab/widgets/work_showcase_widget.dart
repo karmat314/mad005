@@ -4,8 +4,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 class WorkShowcaseWidget extends StatefulWidget {
   final String userId;
+  final bool isViewer;
 
-  const WorkShowcaseWidget({super.key, required this.userId});
+  const WorkShowcaseWidget({super.key, required this.userId, required this.isViewer});
 
   @override
   State<WorkShowcaseWidget> createState() => _WorkShowcaseWidgetState();
@@ -131,6 +132,7 @@ class _WorkShowcaseWidgetState extends State<WorkShowcaseWidget> {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
+                if(!widget.isViewer)
                 IconButton(
                   icon: const Icon(Icons.add),
                   onPressed: () => _showAddOrEditWorkDialog(),

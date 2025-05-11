@@ -5,10 +5,12 @@ import 'package:mad005/screens/portfolio_tab/widgets/work_history_form.dart';
 
 class WorkHistoryWidget extends StatefulWidget {
   final String userId;
+  final bool isViewer;
 
   const WorkHistoryWidget({
     super.key,
     required this.userId,
+    required this.isViewer,
   });
 
   @override
@@ -161,6 +163,7 @@ class _WorkHistoryWidgetState extends State<WorkHistoryWidget> {
                             // Edit and Delete buttons
                             Column(
                               children: [
+                                if(!widget.isViewer)
                                 IconButton(
                                   icon: const Icon(Icons.edit),
                                   onPressed: () {
@@ -170,6 +173,7 @@ class _WorkHistoryWidgetState extends State<WorkHistoryWidget> {
                                     );
                                   },
                                 ),
+                                if(!widget.isViewer)
                                 IconButton(
                                   icon: const Icon(Icons.delete),
                                   onPressed: () async {
