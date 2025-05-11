@@ -99,7 +99,6 @@ class _NameWidgetState extends State<NameWidget> {
 
             // Check if isVerified exists and is true
             final bool isVerified = (data.containsKey('isVerified') && data['isVerified'] == true);
-              print(data.containsKey('isVerified'));
 
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,

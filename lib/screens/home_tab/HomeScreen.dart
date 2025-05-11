@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
     {
       'icon': Icons.quiz,
       'title': 'Quizzes',
-      'subtitle': 'Complete quizzes to earn achievements',
+      'subtitle': 'Complete quizzes to earn achievements for your trade.',
       'tabIndex': 3,
     },
     // Add more features here as needed
@@ -85,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisCount: isSmallScreen ? 1 : (isLargeScreen ? 3 : 2),
                           mainAxisSpacing: isSmallScreen ? 8.0 : 12.0,
                           crossAxisSpacing: isSmallScreen ? 8.0 : 12.0,
-                          childAspectRatio: isSmallScreen ? 1.2 : (isLargeScreen ? 1.1 : 0.9),
+                          childAspectRatio: isSmallScreen ? 1.2 : (isLargeScreen ? 1.1 : 0.8),
                         ),
                         itemCount: features.length,
                         itemBuilder: (context, index) {
