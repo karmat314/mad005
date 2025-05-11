@@ -35,6 +35,7 @@ class QuizScreenState extends State<QuizScreen> {
         'quizTitle': doc['quizTitle'],
         'totalPoints': doc['totalPoints'],
         'timestamp': doc['timestamp'],
+        'achievementAwarded': doc['achievementAwarded']
       };
     }).toList();
 
@@ -106,6 +107,7 @@ class QuizScreenState extends State<QuizScreen> {
             final description = quiz['description'] ?? '';
             final difficulty = quiz['difficulty'] ?? 'Unknown';
 
+            // Find attempt
             final attempt = attemptedQuizzes.firstWhere(
                   (a) => a['quizTitle'] == title,
               orElse: () => {},
@@ -115,6 +117,11 @@ class QuizScreenState extends State<QuizScreen> {
             final attemptDate = attempt['timestamp'] != null
                 ? (attempt['timestamp'] as Timestamp).toDate().toString().split(' ').first
                 : '';
+
+            final achievementAwarded = attempt['achievementAwarded'] == true;
+            if (achievementAwarded) {
+              print('asdfasdf');
+            }
 
             return Card(
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -172,6 +179,23 @@ class QuizScreenState extends State<QuizScreen> {
                         );
                       },
                     ),
+                    if (showAttempted && achievementAwarded)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Row(
+                          children: const [
+                            Icon(Icons.emoji_events, color: Colors.amber),
+                            SizedBox(width: 8),
+                            Text(
+                              'Achievement Unlocked!',
+                              style: TextStyle(
+                                color: Colors.amber,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     const SizedBox(height: 16),
                     Align(
                       alignment: Alignment.centerRight,
@@ -207,6 +231,7 @@ class QuizScreenState extends State<QuizScreen> {
       },
     );
   }
+
 
   Color difficultyColor(String difficulty) {
     switch (difficulty.toLowerCase()) {

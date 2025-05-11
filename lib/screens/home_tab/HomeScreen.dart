@@ -27,6 +27,12 @@ class _HomeScreenState extends State<HomeScreen> {
       'subtitle': 'Manage your portfolio',
       'tabIndex': 2,
     },
+    {
+      'icon': Icons.quiz,
+      'title': 'Portfolio',
+      'subtitle': 'Manage your portfolio',
+      'tabIndex': 3,
+    },
     // Add more features here as needed
   ];
 
