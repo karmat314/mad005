@@ -51,7 +51,6 @@ class QuizScreenState extends State<QuizScreen> {
         setState(() {
           totalPoints = "Error fetching points";
         });
-        print("Error: $e");
       }
     } else {
       setState(() {
@@ -101,7 +100,7 @@ class QuizScreenState extends State<QuizScreen> {
         body: Column(
           children: [
             const SizedBox(height: 16),
-            Text(
+            const Text(
               "Your total points",
               style: TextStyle(fontSize: 20),
             ),
@@ -128,7 +127,6 @@ class QuizScreenState extends State<QuizScreen> {
     );
   }
 
-
   Widget buildQuizList({required bool showAttempted}) {
     return StreamBuilder<QuerySnapshot>(
       stream: db.collection('quizzes').snapshots(),
@@ -143,7 +141,6 @@ class QuizScreenState extends State<QuizScreen> {
 
         final quizDocs = snapshot.data?.docs ?? [];
 
-        // Filter based on attempted / available
         final filteredQuizzes = quizDocs.where((quiz) {
           final title = quiz['title'] ?? '';
           return showAttempted
@@ -195,44 +192,56 @@ class QuizScreenState extends State<QuizScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(description),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Difficulty: $difficulty',
-                      style: TextStyle(
-                        color: difficultyColor(difficulty),
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-
-                    /// Embed YouTube player if videoUrl is not empty
-                    if (videoUrl.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: YoutubePlayer(
-                          controller: YoutubePlayerController(
-                            initialVideoId:
-                            YoutubePlayer.convertUrlToId(videoUrl)!,
-                            flags: const YoutubePlayerFlags(
-                              autoPlay: false,
-                              mute: false,
-                            ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: videoUrl.isNotEmpty
+                                ? Colors.red.withOpacity(0.1)
+                                : Colors.blue.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          showVideoProgressIndicator: true,
-                          progressIndicatorColor: Colors.red,
-                          progressColors: const ProgressBarColors(
-                              playedColor: Colors.red, handleColor: Colors.red),
+                          child: Icon(
+                            videoUrl.isNotEmpty
+                                ? Icons.ondemand_video
+                                : Icons.list_alt,
+                            color: videoUrl.isNotEmpty ? Colors.red : Colors.blue,
+                            size: 48,
+                          ),
                         ),
-                      ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                title,
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Text(description),
+                              const SizedBox(height: 6),
+                              Text(
+                                'Difficulty: $difficulty',
+                                style: TextStyle(
+                                  color: difficultyColor(difficulty),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
 
-                    /// Question Count + Points
+                    const SizedBox(height: 12),
+
+                    /// Question count + points
                     FutureBuilder<QuerySnapshot>(
                       future: db
                           .collection('quizzes')
@@ -263,6 +272,7 @@ class QuizScreenState extends State<QuizScreen> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  const SizedBox(height: 6),
                                   Text('You scored: $scoredPoints points on $attemptDate',
                                       style: const TextStyle(
                                           fontWeight: FontWeight.bold)),
@@ -284,7 +294,10 @@ class QuizScreenState extends State<QuizScreen> {
                         );
                       },
                     ),
+
                     const SizedBox(height: 16),
+
+                    /// Take/Retake Button
                     Align(
                       alignment: Alignment.centerRight,
                       child: ElevatedButton(
