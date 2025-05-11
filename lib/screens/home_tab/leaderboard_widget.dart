@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class LeaderboardWidget extends StatefulWidget {
@@ -12,39 +11,37 @@ class LeaderboardWidget extends StatefulWidget {
 
 class _LeaderboardWidgetState extends State<LeaderboardWidget> {
   final FirebaseFirestore db = FirebaseFirestore.instance;
-  String totalPoints = "Loading..."; // Initialize as loading state.
+  String totalPoints = "Loading...";
+  List<LeaderboardUser> topUsers = []; // Holds top 3 users
 
-  // Fetch the user's total points by summing the points from each quiz in attemptedquizes
-  Future<void> getTotalPoints() async {
+  @override
+  void initState() {
+    super.initState();
+    getUserTotalPoints();
+    getTopUsers(); // Fetch top 3 users
+  }
+
+  Future<void> getUserTotalPoints() async {
     final user = FirebaseAuth.instance.currentUser;
     final userId = user?.uid;
 
     if (userId != null) {
       try {
-        final attemptedQuizzesRef = FirebaseFirestore.instance
+        final attemptedQuizzesRef = db
             .collection('users')
             .doc(userId)
             .collection('attemptedQuizzes');
 
         final querySnapshot = await attemptedQuizzesRef.get();
 
-        if (querySnapshot.docs.isNotEmpty) {
-          int points = 0;
-
-          for (var doc in querySnapshot.docs) {
-            // Assuming 'totalPoints' is a field in each quiz document
-            points +=
-                (doc['totalPoints'] ?? 0) as int; // Add points from each quiz
-          }
-
-          setState(() {
-            totalPoints = points.toString(); // Update with the total sum
-          });
-        } else {
-          setState(() {
-            totalPoints = "No quizzes attempted yet";
-          });
+        int points = 0;
+        for (var doc in querySnapshot.docs) {
+          points += (doc['totalPoints'] ?? 0) as int;
         }
+
+        setState(() {
+          totalPoints = points.toString();
+        });
       } catch (e) {
         setState(() {
           totalPoints = "Error fetching points";
@@ -58,11 +55,61 @@ class _LeaderboardWidgetState extends State<LeaderboardWidget> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    getTotalPoints(); // Fetch points when the widget is initialized.
+  Future<void> getTopUsers() async {
+    try {
+      final usersSnapshot = await db.collection('users').get();
+
+      List<LeaderboardUser> usersList = [];
+
+      for (var userDoc in usersSnapshot.docs) {
+        final userId = userDoc.id;
+
+        // Fetch profile/about document to get name
+        final aboutDocRef = db
+            .collection('users')
+            .doc(userId)
+            .collection('profile')
+            .doc('about');
+
+        final aboutDoc = await aboutDocRef.get();
+
+        String userName = "Unknown";
+        if (aboutDoc.exists && aboutDoc.data() != null) {
+          userName = aboutDoc.data()!['name'] ?? "Unknown";
+        }
+
+        // Fetch attemptedQuizzes and sum totalPoints
+        final attemptedQuizzesRef = db
+            .collection('users')
+            .doc(userId)
+            .collection('attemptedQuizzes');
+
+        final quizzesSnapshot = await attemptedQuizzesRef.get();
+
+        int points = 0;
+        for (var quizDoc in quizzesSnapshot.docs) {
+          points += (quizDoc['totalPoints'] ?? 0) as int;
+        }
+
+        usersList.add(LeaderboardUser(
+          userId: userId,
+          name: userName,
+          totalPoints: points,
+        ));
+      }
+
+      // Sort by points descending and take top 3
+      usersList.sort((a, b) => b.totalPoints.compareTo(a.totalPoints));
+      final topThree = usersList.take(3).toList();
+
+      setState(() {
+        topUsers = topThree;
+      });
+    } catch (e) {
+      print("Error fetching top users: $e");
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -76,54 +123,51 @@ class _LeaderboardWidgetState extends State<LeaderboardWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Your total points",
-                  style: TextStyle(fontSize: 20),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  totalPoints,
-                  style: TextStyle(
-                    fontSize: 60,
-                    fontWeight: FontWeight.bold,
-                    color: colorScheme.primary,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text("Keep completing quizzes to earn more!"),
-              ],
+            Text(
+              "Your total points",
+              style: TextStyle(fontSize: 20),
             ),
+            const SizedBox(height: 8),
+            Text(
+              totalPoints,
+              style: TextStyle(
+                fontSize: 60,
+                fontWeight: FontWeight.bold,
+                color: colorScheme.primary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text("Keep completing quizzes to earn more!"),
             const SizedBox(height: 16),
 
-            // Top 3 Leaderboard with medals
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Leaderboard Highlights",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                _buildLeaderboardItem(
-                  rank: 1,
-                  name: "Alex Johnson",
-                  points: 1245,
-                ),
-                _buildLeaderboardItem(
-                  rank: 2,
-                  name: "Sam Wilson",
-                  points: 1120,
-                ),
-                _buildLeaderboardItem(rank: 3, name: "Karma", points: 980),
-              ],
+            // Top 3 Leaderboard Highlights
+            Text(
+              "Leaderboard Highlights",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
             ),
+
+            if (topUsers.isEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Text("Loading leaderboard..."),
+              )
+            else
+              ...topUsers.asMap().entries.map((entry) {
+                final index = entry.key;
+                final user = entry.value;
+                final isCurrentUser =
+                    user.userId == FirebaseAuth.instance.currentUser?.uid;
+
+                return _buildLeaderboardItem(
+                  rank: index + 1,
+                  name: user.name,
+                  points: user.totalPoints,
+                  isCurrentUser: isCurrentUser,
+                );
+              }),
 
             const SizedBox(height: 12),
             Align(
@@ -177,23 +221,22 @@ class _LeaderboardWidgetState extends State<LeaderboardWidget> {
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: isCurrentUser ? FontWeight.bold : FontWeight.normal,
-                color:
-                    isCurrentUser ? colorScheme.primary : colorScheme.onSurface,
+                color: isCurrentUser
+                    ? colorScheme.primary
+                    : colorScheme.onSurface,
               ),
             ),
           ),
           Chip(
-            backgroundColor:
-                isCurrentUser
-                    ? colorScheme.primary.withOpacity(0.1)
-                    : colorScheme.surfaceContainerHighest,
+            backgroundColor: isCurrentUser
+                ? colorScheme.primary.withOpacity(0.1)
+                : colorScheme.surfaceContainerHighest,
             label: Text(
               "$points pts",
               style: TextStyle(
-                color:
-                    isCurrentUser
-                        ? colorScheme.primary
-                        : colorScheme.onSurfaceVariant,
+                color: isCurrentUser
+                    ? colorScheme.primary
+                    : colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -202,4 +245,16 @@ class _LeaderboardWidgetState extends State<LeaderboardWidget> {
       ),
     );
   }
+}
+
+class LeaderboardUser {
+  final String userId;
+  final String name;
+  final int totalPoints;
+
+  LeaderboardUser({
+    required this.userId,
+    required this.name,
+    required this.totalPoints,
+  });
 }
