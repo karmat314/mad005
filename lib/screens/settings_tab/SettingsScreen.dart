@@ -54,8 +54,20 @@ class SettingsPage extends StatelessWidget {
             },
           ),
 
-          // Spacer to push items to the top
           const SizedBox(height: 50),
+
+          // Copyright
+          const Center(
+            child: Text(
+              'Copyright @ DWPSD',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black54,
+              ),
+            ),
+          ),
+
         ],
       ),
     );
